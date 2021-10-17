@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/layoutDialogEditCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <TextView
+        android:id="@+id/txtDialogTitle"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/edit_deck"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="36dp"/>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/txtDialogTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txtDialogTitle"
+        app:layout_constraintBottom_toBottomOf="@+id/txtDialogTitle"
+        android:src="@drawable/ic_help"
+        android:id="@+id/btnFreqHelp"
+        android:background="@drawable/help_button_background"
+        />
+
+    <Button
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="6dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/ic_close_x"
+        android:id="@+id/btnCloseDialog"
+        android:foreground="?android:attr/selectableItemBackground"
+        />
+
+    <EditText
+        android:id="@+id/etDeckName"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:ems="10"
+        android:hint="@string/deck_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtDialogTitle" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/etRotCards"
+        app:layout_constraintTop_toTopOf="@id/etRotCards"
+        app:layout_constraintBottom_toBottomOf="@id/etRotCards"
+        android:id="@+id/txtMaxRot"
+        android:text="@string/maximum_rotation_cards_in_deck"/>
+
+    <EditText
+        android:id="@+id/etRotCards"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:hint="@string/hash"
+        android:textAlignment="center"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/txtMaxRot"
+        app:layout_constraintTop_toBottomOf="@+id/etDeckName" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cbAllRot"
+        android:text="@string/include_all_rotation_cards"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etRotCards"
+        android:layout_marginTop="6dp"/>
+
+    <TextView
+        android:id="@+id/txtRotPos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/location_of_rotation_cards_in_deck"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cbAllRot"
+        android:layout_marginTop="6dp"/>
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rgRotationPosition"
+        app:layout_constraintTop_toBottomOf="@id/txtRotPos"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="horizontal"
+        android:visibility="visible"
+        >
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/start"
+            android:id="@+id/rbStart"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/end"
+            android:checked="true"
+            android:id="@+id/rbEnd"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mixed"
+            android:id="@+id/rbMixed"/>
+
+    </RadioGroup>
+
+    <CheckBox
+        android:id="@+id/cbTags"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/only_include_cards_with_particular_tags"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rgRotationPosition"
+        android:layout_marginTop="12dp"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/cbTags"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
+        android:id="@+id/layoutTags">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/txtTags"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="@string/tags"
+            />
+
+        <EditText
+            android:id="@+id/etTags"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/separate_with_commas2"
+            android:inputType="textPersonName"
+            app:layout_constraintTop_toBottomOf="@id/txtTags"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/etTags"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@string/must_have_all_tags"
+            android:id="@+id/cbAllTags"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/btnConfirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/ripple_button_background"
+        android:text="@string/save_changes"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layoutTags" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

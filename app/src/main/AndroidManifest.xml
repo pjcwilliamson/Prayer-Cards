@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.williamsonministry.prayercards">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_prayer_cards"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_prayer_cards_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".EditDecks"
+            android:configChanges="orientation|screenSize"/>
+        <activity android:name=".EditCards"
+            android:configChanges="orientation|screenSize"/>
+        <activity android:name=".AddCard"
+            android:configChanges="orientation|screenSize"/>
+        <activity android:name=".DeckSwipe"
+            android:configChanges="orientation|screenSize"/>
+        <activity android:name=".MainActivity"
+            android:configChanges="orientation|screenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

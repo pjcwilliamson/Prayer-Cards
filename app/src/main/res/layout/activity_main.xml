@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <!--    To add button animations, check this website: https://stackoverflow.com/questions/7175873/how-to-set-button-click-effect-in-android-->
+    <ImageButton
+        android:id="@+id/btnInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/help_button_background"
+        android:src="@drawable/ic_info"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/layoutSpinner"
+        app:layout_constraintEnd_toStartOf="@+id/txtSelectDeck"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintVertical_bias="0.1"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtSelectDeck"
+        android:text="@string/select_deck"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/layoutSpinner"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.93"
+        />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_thin"
+        app:layout_constraintBottom_toTopOf="@id/btnStartPrayer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:padding="0dp"
+        android:id="@+id/layoutSpinner"
+        app:layout_constraintVertical_bias="0.65">
+
+        <Spinner
+            android:id="@+id/spDecks"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+    <ImageButton
+        android:id="@+id/btnEditDecks"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="24dp"
+        android:src="@drawable/ic_edit_pencil"
+        app:layout_constraintBottom_toBottomOf="@id/txtSelectDeck"
+
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/txtSelectDeck"
+        app:layout_constraintTop_toTopOf="@id/txtSelectDeck"
+        android:background="@drawable/help_button_background"/>
+<!--        android:background="?android:attr/selectableItemBackground"/>-->
+
+
+    <Button
+        android:id="@+id/btnStartPrayer"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ripple_button_background"
+        android:minWidth="200dp"
+        android:minHeight="100dp"
+        android:text="@string/start_prayer"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageButton
+        android:id="@+id/btnNewCard"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/ripple_button_circle"
+        android:src="@drawable/ic_add"
+        app:layout_constraintBottom_toTopOf="@id/txtNewCard"
+        app:layout_constraintEnd_toStartOf="@+id/btnEditCards"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/txtNewCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="@string/add_new_card"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/btnNewCard"
+        app:layout_constraintStart_toStartOf="@id/btnNewCard"
+        tools:ignore="SmallSp" />
+
+    <ImageButton
+        android:id="@+id/btnEditCards"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/ripple_button_circle"
+        android:src="@drawable/ic_edit_pencil"
+        app:layout_constraintBottom_toTopOf="@id/txtEditCards"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btnNewCard" />
+
+    <TextView
+        android:id="@+id/txtEditCards"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="@string/edit_cards"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/btnEditCards"
+        app:layout_constraintStart_toStartOf="@id/btnEditCards"
+        tools:ignore="SmallSp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

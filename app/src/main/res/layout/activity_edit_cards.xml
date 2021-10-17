@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditCards">
+
+    <ImageButton
+        android:id="@+id/btnDeleteAll"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:srcCompat="@drawable/ic_delete_forever"
+        android:background="@drawable/ripple_button_circle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnAdd"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="18dp"
+        tools:ignore="VectorDrawableCompat"
+        />
+
+    <TextView
+        android:id="@+id/txtDeleteForever"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/delete_all"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toStartOf="@id/btnAdd"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnDeleteAll"
+        tools:ignore="SmallSp" />
+
+    <ImageButton
+        android:id="@+id/btnAdd"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:srcCompat="@drawable/ic_add"
+        android:background="@drawable/ripple_button_circle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnOpenFilter"
+        app:layout_constraintStart_toEndOf="@id/btnDeleteAll"
+        android:layout_marginTop="18dp"
+        tools:ignore="VectorDrawableCompat"
+        />
+
+    <TextView
+        android:id="@+id/txtAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add"
+        android:textSize="10sp"
+        app:layout_constraintTop_toBottomOf="@id/btnAdd"
+        app:layout_constraintEnd_toStartOf="@id/btnOpenFilter"
+        app:layout_constraintStart_toEndOf="@id/btnDeleteAll"
+        tools:ignore="SmallSp" />
+
+    <ImageButton
+        android:id="@+id/btnOpenFilter"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:srcCompat="@drawable/ic_filter"
+        android:background="@drawable/ripple_button_circle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btnAdd"
+        android:layout_marginTop="18dp"
+        tools:ignore="VectorDrawableCompat"
+        />
+
+    <TextView
+        android:id="@+id/txtFilter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/filter"
+        android:textSize="10sp"
+        app:layout_constraintTop_toBottomOf="@id/btnOpenFilter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btnAdd"
+        tools:ignore="SmallSp" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/layoutFilter"
+        app:layout_constraintTop_toBottomOf="@id/txtAdd"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginStart="12dp"
+        android:paddingBottom="12dp"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/etNameSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/prayer_request_contains"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/always"
+            android:checked="true"
+            android:id="@+id/cbFilterAlways"
+            app:layout_constraintTop_toBottomOf="@+id/etNameSearch"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/cbFilterRotation"
+            android:layout_marginEnd="8dp"
+            />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/in_a_rotation"
+            android:checked="true"
+            android:id="@+id/cbFilterRotation"
+            app:layout_constraintTop_toBottomOf="@+id/etNameSearch"
+            app:layout_constraintStart_toEndOf="@id/cbFilterAlways"
+            app:layout_constraintEnd_toStartOf="@id/cbFilterRegSched"
+            android:layout_marginEnd="8dp"
+            />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/on_a_regular_schedule"
+            android:checked="true"
+            android:id="@+id/cbFilterRegSched"
+            app:layout_constraintTop_toBottomOf="@id/etNameSearch"
+            app:layout_constraintStart_toEndOf="@id/cbFilterRotation"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <EditText
+            android:id="@+id/etFilterTags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textCapWords"
+            android:hint="@string/tags_desc"
+            app:layout_constraintTop_toBottomOf="@id/cbFilterRotation"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"/>
+
+        <CheckBox
+            android:id="@+id/cbAllTags"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/must_have_all_tags"
+            app:layout_constraintTop_toBottomOf="@id/etFilterTags"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <Button
+            android:id="@+id/btnResetFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/ripple_button_background"
+            android:text="@string/reset_filter"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cbAllTags"
+            android:layout_marginEnd="8dp"
+            />
+
+        <Button
+            android:id="@+id/btnFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/ripple_button_background"
+            android:text="@string/apply_filter"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cbAllTags"
+            android:layout_marginEnd="8dp"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/editCardsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingTop="12dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutFilter"
+        app:layout_constraintVertical_bias="0.0"
+        />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

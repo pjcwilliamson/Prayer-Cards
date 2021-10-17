@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/layoutDialogEditCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <TextView
+        android:id="@+id/txtDialogTitle"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/edit_prayer_card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <Button
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="6dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/ic_close_x"
+        android:id="@+id/btnCloseDialog"
+        android:foreground="?android:attr/selectableItemBackground"
+        />
+
+    <EditText
+        android:id="@+id/etPrayerReq"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:ems="10"
+        android:hint="@string/prayer_request_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtDialogTitle" />
+
+    <TextView
+        android:id="@+id/txtAdvanced"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/advanced"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etPrayerReq" />
+
+    <Button
+        android:id="@+id/btnOpenOptional"
+        android:layout_width="30sp"
+        android:layout_height="30sp"
+        android:background="@drawable/ic_down_arrow"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txtAdvanced"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="24dp"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:visibility="visible"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/layoutAdvanced"
+        app:layout_constraintTop_toBottomOf="@id/txtAdvanced"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/txtFrequency"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:text="@string/frequency"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/radioGroup"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtFrequency"
+            android:layout_marginTop="24dp"
+            >
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:checked="true"
+                android:text="@string/always"
+                android:id="@+id/rbAlways"
+                />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:checked="false"
+                android:text="@string/on_a_regular_schedule"
+                android:id="@+id/rbRegSched"
+                />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:checked="false"
+                android:text="@string/in_a_rotation"
+                android:id="@+id/rbRotation"
+                />
+
+        </RadioGroup>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/radioGroup"
+            app:layout_constraintTop_toTopOf="@+id/radioGroup"
+            app:layout_constraintBottom_toBottomOf="@+id/radioGroup"
+            android:layout_marginStart="24dp"
+            android:src="@drawable/ic_help"
+            android:id="@+id/btnFreqHelp"
+            android:background="@drawable/help_button_background"
+            />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutRegSched"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroup"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/textEvery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/every"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:textSize="16sp"
+                android:textColor="@android:color/black"
+                />
+
+            <EditText
+                android:id="@+id/etMultiMaxFreq"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="2"
+                android:text="@string/_1"
+                android:inputType="number"
+                app:layout_constraintStart_toEndOf="@+id/textEvery"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="10dp"
+                android:textSize="16sp"            />
+
+            <Spinner
+                android:id="@+id/spMaxFreq"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/frequencies"
+                app:layout_constraintStart_toEndOf="@+id/etMultiMaxFreq"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@id/layoutRegSched"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/layoutLimitViews">
+
+            <CheckBox
+                android:id="@+id/cbLimitViews"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/limit_views"
+                android:textColor="@color/colorLightGrey"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+            <EditText
+                android:id="@+id/etViewLimit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="2"
+                android:hint="#"
+                android:inputType="none"
+                app:layout_constraintStart_toEndOf="@+id/cbLimitViews"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginStart="5dp"
+                android:textSize="16sp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/more_views"
+                android:textColor="@color/colorLightGrey"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/etViewLimit"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="5dp"
+                android:id="@+id/txtViews"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=  "Do not show after: (choose date)"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutLimitViews"
+            android:layout_marginTop="12dp"
+            android:id="@+id/cbExpiryDate"
+            android:textColor="@color/colorLightGrey"
+            android:checked="false"
+            />
+
+        <Spinner
+            android:id="@+id/spMonth"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:entries="@array/months"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cbExpiryDate"
+            app:layout_constraintEnd_toStartOf="@id/spDay"
+            android:layout_marginStart="24dp"
+            android:visibility="gone"
+            />
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:id="@+id/spDay"
+            app:layout_constraintStart_toEndOf="@id/spMonth"
+            app:layout_constraintEnd_toStartOf="@id/spYear"
+            app:layout_constraintTop_toBottomOf="@id/cbExpiryDate"
+            android:entries="@array/dates_31"
+            android:visibility="gone"
+            />
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:id="@+id/spYear"
+            app:layout_constraintStart_toEndOf="@id/spDay"
+            app:layout_constraintTop_toBottomOf="@id/cbExpiryDate"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:entries="@array/years"
+            android:layout_marginEnd="24dp"
+            android:visibility="gone"
+            />
+
+
+        <EditText
+            android:id="@+id/etTags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="64dp"
+            android:ems="10"
+            android:hint="@string/tags_desc"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toStartOf="@id/btnCloseOptional"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spDay" />
+
+        <Button
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/btnCloseOptional"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/ic_up_arrow"
+            android:foreground="?android:attr/selectableItemBackground"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/btnConfirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/ripple_button_background"
+        android:text="@string/save_changes"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layoutAdvanced" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
