@@ -250,6 +250,10 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
         });
     }
 
+    public void notifyDataSetChangedAndSave()  {
+
+    }
+
     @Override
     public int getItemCount() {
         return currentPrayerCards.size();

@@ -329,6 +329,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     }
 
+    /*
+    Updates the list order in the DB to match the order of the passed ArrayList
+     */
     public void saveOrder(ArrayList<PrayerCard> allPrayerCards) {
         SQLiteDatabase db = this.getWritableDatabase();
 
