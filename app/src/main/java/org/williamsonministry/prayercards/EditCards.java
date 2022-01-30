@@ -287,14 +287,16 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
-        dataBaseHelper.saveAllCards(adapter.getAllPrayerCards());
+        adapter.getExecutors().shutdown();
+//        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
+//        dataBaseHelper.saveAllCards(adapter.getAllPrayerCards());
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
-        dataBaseHelper.saveAllCards(adapter.getAllPrayerCards());
+        adapter.getExecutors().shutdown();
+//        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
+//        dataBaseHelper.saveAllCards(adapter.getAllPrayerCards());
     }
 }
