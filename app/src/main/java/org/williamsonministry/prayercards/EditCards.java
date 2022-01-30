@@ -284,19 +284,21 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
         mItemTouchHelper.startDrag(viewHolder);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        adapter.getExecutors().shutdown();
-//        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
-//        dataBaseHelper.saveAllCards(adapter.getAllPrayerCards());
-    }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        adapter.getExecutors().shutdown();
+
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        adapter.getExecutors().shutdown();
 //        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
 //        dataBaseHelper.saveAllCards(adapter.getAllPrayerCards());
-    }
+//    }
+
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        adapter.getExecutors().shutdown();
+//        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
+//        dataBaseHelper.saveAllCards(adapter.getAllPrayerCards());
+//    }
 }
