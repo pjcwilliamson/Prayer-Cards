@@ -1,9 +1,12 @@
 package org.williamsonministry.prayercards;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.Date;
 
-public class PrayerCard implements Comparable<PrayerCard> {
+public class PrayerCard implements Comparable<PrayerCard>, Parcelable {
     private int id;
     private int listOrder;
     private String prayerText;
@@ -35,6 +38,52 @@ public class PrayerCard implements Comparable<PrayerCard> {
         this.expiryDate = expiryDate;
         this.isActive = isActive;
     }
+
+    protected PrayerCard(Parcel in) {
+        id = in.readInt();
+        listOrder = in.readInt();
+        prayerText = in.readString();
+        tags = in.readString();
+        maxFrequency = in.readInt();
+        multipleMaxFreq = in.readInt();
+        isInRotation = in.readByte() != 0;
+        lastSeen = new Date(in.readLong());
+        viewsRemaining = in.readInt();
+        expiryDate = new Date (in.readLong());
+        isActive = in.readByte() != 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeInt(listOrder);
+        dest.writeString(prayerText);
+        dest.writeString(tags);
+        dest.writeInt(maxFrequency);
+        dest.writeInt(multipleMaxFreq);
+        dest.writeByte((byte) (isInRotation ? 1 : 0));
+        dest.writeLong(lastSeen.getTime());
+        dest.writeInt(viewsRemaining);
+        dest.writeLong(expiryDate.getTime());
+        dest.writeByte((byte) (isActive ? 1 : 0));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<PrayerCard> CREATOR = new Creator<PrayerCard>() {
+        @Override
+        public PrayerCard createFromParcel(Parcel in) {
+            return new PrayerCard(in);
+        }
+
+        @Override
+        public PrayerCard[] newArray(int size) {
+            return new PrayerCard[size];
+        }
+    };
 
     @Override
     public int compareTo(PrayerCard prayerCard) {

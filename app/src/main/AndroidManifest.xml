@@ -25,6 +25,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".SaveCardsToDbJobService"
+            android:exported="false"
+            android:description="@string/service_desc"/>
     </application>
 
 </manifest>

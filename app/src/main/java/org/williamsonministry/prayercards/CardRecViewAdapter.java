@@ -3,6 +3,7 @@ package org.williamsonministry.prayercards;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.williamsonministry.prayercards.PrayerCard.UNUSED;
+import static org.williamsonministry.prayercards.SaveCardsToDbJobService.ALL_PRAYERCARDS_ARRAYLIST_KEY;
 
 public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.ViewHolder> implements ItemTouchHelperAdapter {
 
@@ -37,28 +39,28 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
     private final Context mContext;
     private final OnStartDragListener mDragStartListener;
     private int positionFirstInactive;
-    private final ExecutorService executors;
-    private final Runnable runnable;
+//    private final ExecutorService executors;
+//    private final Runnable runnable;
 
     public CardRecViewAdapter(Context mContext, OnStartDragListener dragStartListener) {
         this.mContext = mContext;
         this.mDragStartListener = dragStartListener;
         DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
         allPrayerCards = dataBaseHelper.getAll();
-        executors = Executors.newFixedThreadPool(1);
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                // your async code goes here.
-                DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
-                dataBaseHelper.saveAllCards(allPrayerCards);
-            }
-        };
+//        executors = Executors.newFixedThreadPool(1);
+//        runnable = new Runnable() {
+//            @Override
+//            public void run() {
+//                // your async code goes here.
+//                DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
+//                dataBaseHelper.saveAllCards(allPrayerCards);
+//            }
+//        };
     }
 
-    public ExecutorService getExecutors() {
-        return executors;
-    }
+//    public ExecutorService getExecutors() {
+//        return executors;
+//    }
 
     public int getPositionFirstInactive() {
         return positionFirstInactive;
@@ -274,7 +276,10 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
     }
 
     public void asyncSave() {
-        executors.submit(runnable);
+//        executors.submit(runnable);
+        Intent intent = new Intent(mContext, SaveCardsToDbJobService.class);
+        intent.putParcelableArrayListExtra(ALL_PRAYERCARDS_ARRAYLIST_KEY, allPrayerCards);
+        mContext.startService(intent);
     }
 
     @Override

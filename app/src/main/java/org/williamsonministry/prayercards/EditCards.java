@@ -289,7 +289,7 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        adapter.getExecutors().shutdown();
+//        adapter.getExecutors().shutdown();
 //        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
 //        dataBaseHelper.saveAllCards(adapter.getAllPrayerCards());
     }
@@ -297,7 +297,7 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
     @Override
     protected void onPause() {
         super.onPause();
-        adapter.getExecutors().shutdown();
+//        adapter.getExecutors().shutdown();
 //        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
 //        dataBaseHelper.saveAllCards(adapter.getAllPrayerCards());
     }
