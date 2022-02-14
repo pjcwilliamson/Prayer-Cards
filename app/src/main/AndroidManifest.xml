@@ -27,7 +27,10 @@
         </activity>
         <service android:name=".SaveCardsToDbJobService"
             android:exported="false"
-            android:description="@string/service_desc"/>
+            android:description="@string/card_save_service_desc"/>
+        <service android:name=".SaveDecksToDbJobService"
+            android:exported="false"
+            android:description="@string/deck_save_service_desc"/>
     </application>
 
 </manifest>

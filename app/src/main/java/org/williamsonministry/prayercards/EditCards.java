@@ -283,22 +283,4 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
         mItemTouchHelper.startDrag(viewHolder);
     }
-
-
-    // TODO: 1/29/2022 Find what is slow when leaving EditCards - I think it's completing a backlog of tasks for saving 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-//        adapter.getExecutors().shutdown();
-//        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
-//        dataBaseHelper.saveAllCards(adapter.getAllPrayerCards());
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-//        adapter.getExecutors().shutdown();
-//        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
-//        dataBaseHelper.saveAllCards(adapter.getAllPrayerCards());
-    }
 }

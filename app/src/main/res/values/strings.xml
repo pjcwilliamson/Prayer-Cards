@@ -55,5 +55,6 @@
     <string name="swipe_for_more_cards"><![CDATA[Swipe for more cards! —>]]></string>
     <string name="prayer_request_contains">Prayer Request contains...</string>
     <string name="add_new_card2">Add New Card</string>
-    <string name="service_desc">A service to save all the prayer cards to a local database in the background</string>
+    <string name="card_save_service_desc">A service to save all the prayer cards to a local database in the background</string>
+    <string name="deck_save_service_desc">A service to save all the prayer decks to a local database in the background</string>
 </resources>

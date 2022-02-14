@@ -87,18 +87,4 @@ public class EditDecks extends AppCompatActivity implements OnStartDragListener 
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
         mItemTouchHelper.startDrag(viewHolder);
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
-        dataBaseHelper.saveAllDecks(adapter.getAllDecks());
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
-        dataBaseHelper.saveAllDecks(adapter.getAllDecks());
-    }
 }

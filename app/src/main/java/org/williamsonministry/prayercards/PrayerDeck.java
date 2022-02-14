@@ -1,6 +1,11 @@
 package org.williamsonministry.prayercards;
 
-public class PrayerDeck {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.Date;
+
+public class PrayerDeck implements Parcelable {
     private int id;
     private int listOrder;
     private String prayerPlanName;
@@ -25,6 +30,46 @@ public class PrayerDeck {
         this.rotationPosition = rotationPosition;
         this.isActive = isActive;
     }
+
+    protected PrayerDeck(Parcel in) {
+        id = in.readInt();
+        listOrder = in.readInt();
+        prayerPlanName = in.readString();
+        tags = in.readString();
+        mustHaveAllTags = in.readByte() != 0;
+        maxCardsInRotation = in.readInt();
+        rotationPosition = in.readInt();
+        isActive = in.readByte() != 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeInt(listOrder);
+        dest.writeString(prayerPlanName);
+        dest.writeString(tags);
+        dest.writeByte((byte) (mustHaveAllTags ? 1 : 0));
+        dest.writeInt(maxCardsInRotation);
+        dest.writeInt(rotationPosition);
+        dest.writeByte((byte) (isActive ? 1 : 0));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<PrayerDeck> CREATOR = new Creator<PrayerDeck>() {
+        @Override
+        public PrayerDeck createFromParcel(Parcel in) {
+            return new PrayerDeck(in);
+        }
+
+        @Override
+        public PrayerDeck[] newArray(int size) {
+            return new PrayerDeck[size];
+        }
+    };
 
     public int getId() {
         return id;

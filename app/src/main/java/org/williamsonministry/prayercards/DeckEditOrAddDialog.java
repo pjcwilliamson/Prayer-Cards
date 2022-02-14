@@ -229,6 +229,7 @@ public class DeckEditOrAddDialog implements View.OnClickListener {
                         ((EditDecks) mContext).getAdapter().getAllDecks().set(position, newPrayerDeck);
                         Toast.makeText(mContext, "Prayer Plan edited successfully", Toast.LENGTH_SHORT).show();
                         ((EditDecks) mContext).getAdapter().notifyDataSetChanged();
+                        ((EditDecks) mContext).getAdapter().asyncSave();
                         alertDialog.cancel();
                     }
                 }
