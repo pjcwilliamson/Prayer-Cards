@@ -7,30 +7,6 @@
     tools:context=".EditCards">
 
     <ImageButton
-        android:id="@+id/btnDeleteAll"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        app:srcCompat="@drawable/ic_delete_forever"
-        android:background="@drawable/ripple_button_circle"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btnAdd"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="18dp"
-        tools:ignore="VectorDrawableCompat"
-        />
-
-    <TextView
-        android:id="@+id/txtDeleteForever"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/delete_all"
-        android:textSize="10sp"
-        app:layout_constraintEnd_toStartOf="@id/btnAdd"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnDeleteAll"
-        tools:ignore="SmallSp" />
-
-    <ImageButton
         android:id="@+id/btnAdd"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -38,7 +14,7 @@
         android:background="@drawable/ripple_button_circle"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btnOpenFilter"
-        app:layout_constraintStart_toEndOf="@id/btnDeleteAll"
+        app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="18dp"
         tools:ignore="VectorDrawableCompat"
         />
@@ -51,7 +27,7 @@
         android:textSize="10sp"
         app:layout_constraintTop_toBottomOf="@id/btnAdd"
         app:layout_constraintEnd_toStartOf="@id/btnOpenFilter"
-        app:layout_constraintStart_toEndOf="@id/btnDeleteAll"
+        app:layout_constraintStart_toStartOf="parent"
         tools:ignore="SmallSp" />
 
     <ImageButton
@@ -61,7 +37,7 @@
         app:srcCompat="@drawable/ic_filter"
         android:background="@drawable/ripple_button_circle"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnDeleteAll"
         app:layout_constraintStart_toEndOf="@id/btnAdd"
         android:layout_marginTop="18dp"
         tools:ignore="VectorDrawableCompat"
@@ -74,8 +50,56 @@
         android:text="@string/filter"
         android:textSize="10sp"
         app:layout_constraintTop_toBottomOf="@id/btnOpenFilter"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnDeleteAll"
         app:layout_constraintStart_toEndOf="@id/btnAdd"
+        tools:ignore="SmallSp" />
+
+    <ImageButton
+        android:id="@+id/btnDeleteAll"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:srcCompat="@drawable/ic_delete_forever"
+        android:background="@drawable/ripple_button_circle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnExportImport"
+        app:layout_constraintStart_toEndOf="@id/btnOpenFilter"
+        android:layout_marginTop="18dp"
+        tools:ignore="VectorDrawableCompat"
+        />
+
+    <TextView
+        android:id="@+id/txtDeleteForever"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/delete_all"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toStartOf="@id/btnExportImport"
+        app:layout_constraintStart_toEndOf="@id/btnOpenFilter"
+        app:layout_constraintTop_toBottomOf="@id/btnDeleteAll"
+        tools:ignore="SmallSp" />
+
+    <ImageButton
+        android:id="@+id/btnExportImport"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:srcCompat="@drawable/ic_folder"
+        android:background="@drawable/ripple_button_circle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btnDeleteAll"
+        android:layout_marginTop="18dp"
+        tools:ignore="VectorDrawableCompat"
+        />
+
+    <TextView
+        android:id="@+id/txtExportImport"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/export_import"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btnDeleteAll"
+        app:layout_constraintTop_toBottomOf="@id/btnDeleteAll"
         tools:ignore="SmallSp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout

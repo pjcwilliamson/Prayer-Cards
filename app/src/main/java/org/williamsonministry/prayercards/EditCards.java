@@ -30,7 +30,7 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
     private RecyclerView editCardsRecView;
     private CardRecViewAdapter adapter;
     private ItemTouchHelper mItemTouchHelper;
-    private ImageButton btnOpenFilter, btnDeleteAll, btnAdd;
+    private ImageButton btnOpenFilter, btnDeleteAll, btnAdd, btnExportImport;
     private CheckBox cbFilterAlways, cbFilterRotation, cbFilterRegSched, cbAllTags;
     private EditText etFilterTags, etNameSearch;
     private Button btnApplyFilter, btnResetFilter;
@@ -91,6 +91,14 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
         });
 
         btnAdd.setOnClickListener(new CardEditOrAddDialog(CardEditOrAddDialog.ADD,this, null, UNUSED));
+
+        btnExportImport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String result = dataBaseHelper.saveToCSV();
+                Toast.makeText(EditCards.this, result, Toast.LENGTH_LONG).show();
+            }
+        });
 
         btnDeleteAll.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -268,6 +276,7 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
         btnOpenFilter = findViewById(R.id.btnOpenFilter);
         btnDeleteAll = findViewById(R.id.btnDeleteAll);
         btnAdd = findViewById(R.id.btnAdd);
+        btnExportImport = findViewById(R.id.btnExportImport);
         cbFilterAlways = findViewById(R.id.cbFilterAlways);
         cbFilterRotation = findViewById(R.id.cbFilterRotation);
         cbFilterRegSched = findViewById(R.id.cbFilterRegSched);

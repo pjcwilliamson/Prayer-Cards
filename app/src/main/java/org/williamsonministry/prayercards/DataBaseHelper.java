@@ -6,8 +6,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
+
 import androidx.annotation.Nullable;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -615,6 +620,65 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.close();
 
         return newPrayerDeck;
+    }
+
+    public String saveToCSV() {
+        // TODO: 2/19/2022 Make this work. Got it from here:  https://parallelcodes.com/android-export-sqlite-database/
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor c = null;
+
+        try {
+            c = db.rawQuery("SELECT * FROM " + PRAYER_CARD_TABLE, null);
+            int rowCount = 0;
+            int colCount = 0;
+            File sdCardDir = Environment.getExternalStorageDirectory();
+            String filename = "MyBackUp.csv";
+            // the name of the file to export with
+            File saveFile = new File(sdCardDir, filename);
+            FileWriter fw = new FileWriter(saveFile);
+
+            BufferedWriter bw = new BufferedWriter(fw);
+            rowCount = c.getCount();
+            colCount = c.getColumnCount();
+            if (rowCount > 0) {
+                c.moveToFirst();
+
+                for (int i = 0; i < colCount; i++) {
+                    if (i != colCount - 1) {
+
+                        bw.write(c.getColumnName(i) + ",");
+
+                    } else {
+
+                        bw.write(c.getColumnName(i));
+
+                    }
+                }
+                bw.newLine();
+
+                for (int i = 0; i < rowCount; i++) {
+                    c.moveToPosition(i);
+
+                    for (int j = 0; j < colCount; j++) {
+                        if (j != colCount - 1)
+                            bw.write(c.getString(j) + ",");
+                        else
+                            bw.write(c.getString(j));
+                    }
+                    bw.newLine();
+                }
+                bw.flush();
+                return "Exported Successfully.";
+            }
+        } catch (Exception ex) {
+            if (db.isOpen()) {
+                db.close();
+                return ex.getMessage();
+            }
+
+        }
+        return "Export failed";
     }
 }
 

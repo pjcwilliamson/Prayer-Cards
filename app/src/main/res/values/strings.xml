@@ -57,4 +57,5 @@
     <string name="add_new_card2">Add New Card</string>
     <string name="card_save_service_desc">A service to save all the prayer cards to a local database in the background</string>
     <string name="deck_save_service_desc">A service to save all the prayer decks to a local database in the background</string>
+    <string name="export_import">Export/Import</string>
 </resources>
