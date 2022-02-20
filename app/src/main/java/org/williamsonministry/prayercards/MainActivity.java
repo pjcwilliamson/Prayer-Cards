@@ -128,18 +128,13 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sp = getSharedPreferences("LAST_PRAYER_PLAN", Context.MODE_PRIVATE);
 
-        String lastDeckName = sp.getString("LAST_PRAYER_PLAN","CJkjd&ijv33dcsaDRF$#vH%$435");
+        String lastDeckName = sp.getString("LAST_PRAYER_PLAN",null);
 
-        int lastPlanOrder;
+        int lastPlanOrder = 0;
 
-        if (lastDeckName.equals("CJkjd&ijv33dcsaDRF$#vH%$435")) {
-            lastPlanOrder = 0;
-        }   else    {
-            PrayerDeck lastDeckSelected = dataBaseHelper.getDeckByName(lastDeckName);
-            if (null != lastDeckSelected) {
-                lastPlanOrder = lastDeckSelected.getListOrder();
-            } else  {
-                lastPlanOrder = 0;
+        for (int i = 0; i < deckNameArrayList.size(); i++)   {
+            if (lastDeckName.equals(deckNameArrayList.get(i))) {
+                lastPlanOrder = i;
             }
         }
 
@@ -184,18 +179,13 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sp = getSharedPreferences("LAST_PRAYER_PLAN", Context.MODE_PRIVATE);
 
-        String lastDeckName = sp.getString("LAST_PRAYER_PLAN","CJkjd&ijv33dcsaDRF$#vH%$435");
+        String lastDeckName = sp.getString("LAST_PRAYER_PLAN",null);
 
-        int lastPlanOrder;
+        int lastPlanOrder = 0;
 
-        if (lastDeckName.equals("CJkjd&ijv33dcsaDRF$#vH%$435")) {
-            lastPlanOrder = 0;
-        }   else    {
-            PrayerDeck lastDeckSelected = dataBaseHelper.getDeckByName(lastDeckName);
-            if (null != lastDeckSelected) {
-                lastPlanOrder = lastDeckSelected.getListOrder();
-            } else  {
-                lastPlanOrder = 0;
+        for (int i = 0; i < deckNameArrayList.size(); i++)   {
+            if (lastDeckName.equals(deckNameArrayList.get(i))) {
+                lastPlanOrder = i;
             }
         }
 
