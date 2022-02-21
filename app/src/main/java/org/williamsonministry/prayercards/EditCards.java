@@ -3,13 +3,18 @@ package org.williamsonministry.prayercards;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -95,8 +100,16 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
         btnExportImport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String result = dataBaseHelper.saveToCSV();
-                Toast.makeText(EditCards.this, result, Toast.LENGTH_LONG).show();
+                // TODO: 2/21/2022 Add a proper import/export UI 
+                // TODO: 2/21/2022 Manage permission better (so once you allow, it then goes to export 
+                final int REQUEST_EXTERNAL_STORAGE = 1;
+                if (ContextCompat.checkSelfPermission(EditCards.this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(EditCards.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
+                } else {
+                    String result = dataBaseHelper.saveToCSV();
+                    Toast.makeText(EditCards.this, result, Toast.LENGTH_LONG).show();
+                }
             }
         });
 

@@ -1,14 +1,19 @@
 package org.williamsonministry.prayercards;
 
+import android.Manifest;
+import android.app.Activity;
 import android.bluetooth.le.ScanSettings;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -623,61 +628,64 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public String saveToCSV() {
-        // TODO: 2/19/2022 Make this work. Got it from here:  https://parallelcodes.com/android-export-sqlite-database/
-        SQLiteDatabase db = this.getReadableDatabase();
+        // TODO: 2/19/2022 Make this work better. May have to do checks if external storage exists etc. Got most this code from here:  https://parallelcodes.com/android-export-sqlite-database/, also here: https://stackoverflow.com/questions/31367270/exporting-sqlite-database-to-csv-file-in-android
 
-        Cursor c = null;
 
-        try {
-            c = db.rawQuery("SELECT * FROM " + PRAYER_CARD_TABLE, null);
-            int rowCount = 0;
-            int colCount = 0;
-            File sdCardDir = Environment.getExternalStorageDirectory();
-            String filename = "MyBackUp.csv";
-            // the name of the file to export with
-            File saveFile = new File(sdCardDir, filename);
-            FileWriter fw = new FileWriter(saveFile);
+            SQLiteDatabase db = this.getReadableDatabase();
 
-            BufferedWriter bw = new BufferedWriter(fw);
-            rowCount = c.getCount();
-            colCount = c.getColumnCount();
-            if (rowCount > 0) {
-                c.moveToFirst();
+            Cursor c = null;
 
-                for (int i = 0; i < colCount; i++) {
-                    if (i != colCount - 1) {
+            try {
+                c = db.rawQuery("SELECT * FROM " + PRAYER_CARD_TABLE, null);
+                int rowCount = 0;
+                int colCount = 0;
+                File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                String filename = "MyBackUp.csv";
+                // the name of the file to export with
+                File saveFile = new File(downloadDir, filename);
+                FileWriter fw = new FileWriter(saveFile);
 
-                        bw.write(c.getColumnName(i) + ",");
+                BufferedWriter bw = new BufferedWriter(fw);
+                rowCount = c.getCount();
+                colCount = c.getColumnCount();
+                if (rowCount > 0) {
+                    c.moveToFirst();
 
-                    } else {
+                    for (int i = 0; i < colCount; i++) {
+                        if (i != colCount - 1) {
 
-                        bw.write(c.getColumnName(i));
+                            bw.write(c.getColumnName(i) + ",");
 
-                    }
-                }
-                bw.newLine();
+                        } else {
 
-                for (int i = 0; i < rowCount; i++) {
-                    c.moveToPosition(i);
+                            bw.write(c.getColumnName(i));
 
-                    for (int j = 0; j < colCount; j++) {
-                        if (j != colCount - 1)
-                            bw.write(c.getString(j) + ",");
-                        else
-                            bw.write(c.getString(j));
+                        }
                     }
                     bw.newLine();
+
+                    for (int i = 0; i < rowCount; i++) {
+                        c.moveToPosition(i);
+
+                        for (int j = 0; j < colCount; j++) {
+                            if (j != colCount - 1)
+                                bw.write(c.getString(j) + ",");
+                            else
+                                bw.write(c.getString(j));
+                        }
+                        bw.newLine();
+                    }
+                    bw.flush();
+                    return "Exported Successfully.";
                 }
-                bw.flush();
-                return "Exported Successfully.";
-            }
-        } catch (Exception ex) {
-            if (db.isOpen()) {
-                db.close();
-                return ex.getMessage();
+            } catch (Exception ex) {
+                if (db.isOpen()) {
+                    db.close();
+                    return ex.getMessage();
+                }
+
             }
 
-        }
         return "Export failed";
     }
 }
