@@ -36,6 +36,7 @@ import static org.williamsonministry.prayercards.PrayerCard.UNUSED;
 
 public class EditCards extends AppCompatActivity implements OnStartDragListener {
     public static final int CREATE_FILE_CVS = 801;
+    public static final int SHARE_CVS_FILE = 802;
 
     private RecyclerView editCardsRecView;
     private CardRecViewAdapter adapter;
@@ -60,6 +61,12 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
                 OutputStream os = getContentResolver().openOutputStream(uri);
                 DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
                 String result = dataBaseHelper.saveToCSV(os);
+
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/csv");
+                shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                startActivityForResult(Intent.createChooser(shareIntent, "Backup"), SHARE_CVS_FILE);
+
                 Toast.makeText(EditCards.this, result, Toast.LENGTH_LONG).show();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();

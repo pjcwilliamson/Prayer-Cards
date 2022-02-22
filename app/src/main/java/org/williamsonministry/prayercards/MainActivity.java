@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         if (!hasBeenOpened) {
             AlertDialog aDHelp = new AlertDialog.Builder(MainActivity.this).create();
             aDHelp.setTitle("Info");
-            aDHelp.setMessage("This is an app to help you keep track of things you want to be praying for.\n\n"+
+            aDHelp.setMessage("This is an app to help you keep track of things you want to be praying for.\n\n" +
                     "With this app you can create digital prayer cards. Some things you may want to pray for every time you pray, other things" +
                     " you may want to be praying for more occasionally. Sometimes you may want to pray for something a few times " +
                     "over a few weeks, such as when someone gives you a prayer request. This app can accommodate however you want to be praying!\n\n" +
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 AlertDialog aDHelp = new AlertDialog.Builder(MainActivity.this).create();
                 aDHelp.setTitle("Info");
-                aDHelp.setMessage("This is an app to help you keep track of things you want to be praying for.\n\n"+
+                aDHelp.setMessage("This is an app to help you keep track of things you want to be praying for.\n\n" +
                         "With this app you can create digital prayer cards. Some things you may want to pray for every time you pray, other things" +
                         " you may want to be praying for more occasionally. Sometimes you may want to pray for something a few times " +
                         "over a few weeks, such as when someone gives you a prayer request. This app can accommodate however you want to be praying!\n\n" +
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String deckName = spSelectDeck.getSelectedItem().toString();
-                Intent intent = new Intent(MainActivity.this,DeckSwipe.class);
+                Intent intent = new Intent(MainActivity.this, DeckSwipe.class);
                 intent.putExtra(DECK_PARAMS, deckName);
                 startActivity(intent);
             }
@@ -128,13 +128,15 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sp = getSharedPreferences("LAST_PRAYER_PLAN", Context.MODE_PRIVATE);
 
-        String lastDeckName = sp.getString("LAST_PRAYER_PLAN",null);
+        String lastDeckName = sp.getString("LAST_PRAYER_PLAN", null);
 
         int lastPlanOrder = 0;
 
-        for (int i = 0; i < deckNameArrayList.size(); i++)   {
-            if (lastDeckName.equals(deckNameArrayList.get(i))) {
-                lastPlanOrder = i;
+        if (null != lastDeckName) {
+            for (int i = 0; i < deckNameArrayList.size(); i++) {
+                if (lastDeckName.equals(deckNameArrayList.get(i))) {
+                    lastPlanOrder = i;
+                }
             }
         }
 
@@ -179,13 +181,15 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sp = getSharedPreferences("LAST_PRAYER_PLAN", Context.MODE_PRIVATE);
 
-        String lastDeckName = sp.getString("LAST_PRAYER_PLAN",null);
+        String lastDeckName = sp.getString("LAST_PRAYER_PLAN", null);
 
         int lastPlanOrder = 0;
 
-        for (int i = 0; i < deckNameArrayList.size(); i++)   {
-            if (lastDeckName.equals(deckNameArrayList.get(i))) {
-                lastPlanOrder = i;
+        if (null != lastDeckName) {
+            for (int i = 0; i < deckNameArrayList.size(); i++) {
+                if (lastDeckName.equals(deckNameArrayList.get(i))) {
+                    lastPlanOrder = i;
+                }
             }
         }
 
