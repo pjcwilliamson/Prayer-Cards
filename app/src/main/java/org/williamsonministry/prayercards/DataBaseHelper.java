@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.bluetooth.le.ScanSettings;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -18,6 +19,8 @@ import androidx.core.content.ContextCompat;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -627,7 +630,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return newPrayerDeck;
     }
 
-    public String saveToCSV() {
+    public String saveToCSV(OutputStream os) {
         // TODO: 2/19/2022 Make this work better. May have to do checks if external storage exists etc. Got most this code from here:  https://parallelcodes.com/android-export-sqlite-database/, also here: https://stackoverflow.com/questions/31367270/exporting-sqlite-database-to-csv-file-in-android
 
 
@@ -639,13 +642,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 c = db.rawQuery("SELECT * FROM " + PRAYER_CARD_TABLE, null);
                 int rowCount = 0;
                 int colCount = 0;
-                File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                String filename = "MyBackUp.csv";
-                // the name of the file to export with
-                File saveFile = new File(downloadDir, filename);
-                FileWriter fw = new FileWriter(saveFile);
+//                File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+//                String filename = "MyBackUp.csv";
+//                // the name of the file to export with
+//                File saveFile = new File(downloadDir, filename);
+//                FileWriter fw = new FileWriter(saveFile);
 
-                BufferedWriter bw = new BufferedWriter(fw);
+                // TODO: 2/21/2022 What if there's special characters in the PrayerCards? Will they screw up my CSV? HMMM??? 
+
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
                 rowCount = c.getCount();
                 colCount = c.getColumnCount();
                 if (rowCount > 0) {
@@ -676,6 +681,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                         bw.newLine();
                     }
                     bw.flush();
+
                     return "Exported Successfully.";
                 }
             } catch (Exception ex) {

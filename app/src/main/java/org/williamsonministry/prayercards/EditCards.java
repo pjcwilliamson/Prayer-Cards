@@ -1,5 +1,6 @@
 package org.williamsonministry.prayercards;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -15,6 +16,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +25,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -31,6 +35,7 @@ import static org.williamsonministry.prayercards.PrayerCard.ALWAYS;
 import static org.williamsonministry.prayercards.PrayerCard.UNUSED;
 
 public class EditCards extends AppCompatActivity implements OnStartDragListener {
+    public static final int CREATE_FILE_CVS = 801;
 
     private RecyclerView editCardsRecView;
     private CardRecViewAdapter adapter;
@@ -43,6 +48,23 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
 
     public CardRecViewAdapter getAdapter() {
         return adapter;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CREATE_FILE_CVS && resultCode == Activity.RESULT_OK) {
+
+            Uri uri = data.getData();
+            try {
+                OutputStream os = getContentResolver().openOutputStream(uri);
+                DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
+                String result = dataBaseHelper.saveToCSV(os);
+                Toast.makeText(EditCards.this, result, Toast.LENGTH_LONG).show();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -82,8 +104,6 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
 
         adapter.setCards(allCardsNewListOrder);
 
-
-
         btnOpenFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,11 +127,18 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
                         Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(EditCards.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
                 } else {
-                    String result = dataBaseHelper.saveToCSV();
-                    Toast.makeText(EditCards.this, result, Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent.setType("text/csv");
+                    intent.putExtra(Intent.EXTRA_TITLE, "MyBackUp.csv");
+                    startActivityForResult(intent, CREATE_FILE_CVS);
+                    //String result = dataBaseHelper.saveToCSV();
+                    //Toast.makeText(EditCards.this, result, Toast.LENGTH_LONG).show();
                 }
             }
         });
+
+
 
         btnDeleteAll.setOnClickListener(new View.OnClickListener() {
             @Override
