@@ -1,5 +1,6 @@
 package org.williamsonministry.prayercards;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,8 +36,9 @@ import static org.williamsonministry.prayercards.PrayerCard.ALWAYS;
 import static org.williamsonministry.prayercards.PrayerCard.UNUSED;
 
 public class EditCards extends AppCompatActivity implements OnStartDragListener {
-    public static final int CREATE_FILE_CVS = 801;
-    public static final int SHARE_CVS_FILE = 802;
+    private static final int CREATE_FILE_CVS = 801;
+    private static final int SHARE_CVS_FILE = 802;
+    private static final int WRITE_PERMISSION_CODE = 101;
 
     private RecyclerView editCardsRecView;
     private CardRecViewAdapter adapter;
@@ -127,25 +129,10 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
         btnExportImport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: 2/21/2022 Add a proper import/export UI 
-                // TODO: 2/21/2022 Manage permission better (so once you allow, it then goes to export 
-                final int REQUEST_EXTERNAL_STORAGE = 1;
-                if (ContextCompat.checkSelfPermission(EditCards.this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(EditCards.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
-                } else {
-                    Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent.setType("text/csv");
-                    intent.putExtra(Intent.EXTRA_TITLE, "MyBackUp.csv");
-                    startActivityForResult(intent, CREATE_FILE_CVS);
-                    //String result = dataBaseHelper.saveToCSV();
-                    //Toast.makeText(EditCards.this, result, Toast.LENGTH_LONG).show();
-                }
+                // TODO: 2/21/2022 Add a proper import/export UI
+                exportData();
             }
         });
-
-
 
         btnDeleteAll.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -210,6 +197,20 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
             if (intent.getStringExtra(EDIT_STARTUP).equals("add")) {
                 btnAdd.performClick();
             }
+        }
+    }
+
+    private void exportData() {
+        // TODO: 2/21/2022 Manage permission better - maybe provide rationale?
+        if (ContextCompat.checkSelfPermission(EditCards.this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(EditCards.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION_CODE);
+        } else {
+            Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("text/csv");
+            intent.putExtra(Intent.EXTRA_TITLE, "MyBackUp.csv");
+            startActivityForResult(intent, CREATE_FILE_CVS);
         }
     }
 
@@ -338,5 +339,18 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
     @Override
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
         mItemTouchHelper.startDrag(viewHolder);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == WRITE_PERMISSION_CODE)   {
+            if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                exportData();
+            } else  {
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
