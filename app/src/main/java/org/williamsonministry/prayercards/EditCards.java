@@ -15,7 +15,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,9 +35,11 @@ import static org.williamsonministry.prayercards.PrayerCard.ALWAYS;
 import static org.williamsonministry.prayercards.PrayerCard.UNUSED;
 
 public class EditCards extends AppCompatActivity implements OnStartDragListener {
-    private static final int CREATE_FILE_CVS = 801;
+    private static final int EXPORT_FILE_CSV = 801;
     private static final int SHARE_CVS_FILE = 802;
-    private static final int WRITE_PERMISSION_CODE = 101;
+    private static final int IMPORT_FILE_CSV = 803;
+    private static final int EXPORT_WRITE_PERMISSION_CODE = 101;
+    private static final int IMPORT_READ_PERMISSION_CODE = 102;
 
     private RecyclerView editCardsRecView;
     private CardRecViewAdapter adapter;
@@ -56,23 +57,33 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CREATE_FILE_CVS && resultCode == Activity.RESULT_OK) {
 
-            Uri uri = data.getData();
-            try {
-                OutputStream os = getContentResolver().openOutputStream(uri);
-                DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
-                String result = dataBaseHelper.saveToCSV(os);
+        switch (requestCode)    {
+            case EXPORT_FILE_CSV:
+                if (resultCode == Activity.RESULT_OK)   {
+                    Uri uri = data.getData();
+                    try {
+                        OutputStream os = getContentResolver().openOutputStream(uri);
+                        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
+                        String result = dataBaseHelper.saveToCSV(os);
 
-                Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                shareIntent.setType("text/csv");
-                shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-                startActivityForResult(Intent.createChooser(shareIntent, "Backup"), SHARE_CVS_FILE);
+                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                        shareIntent.setType("text/csv");
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                        startActivityForResult(Intent.createChooser(shareIntent, "Backup"), SHARE_CVS_FILE);
 
-                Toast.makeText(EditCards.this, result, Toast.LENGTH_LONG).show();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+                        Toast.makeText(EditCards.this, result, Toast.LENGTH_LONG).show();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            case IMPORT_FILE_CSV:
+                Uri uri = data.getData();
+                Toast.makeText(this, uri.toString(), Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                break;
         }
     }
 
@@ -127,10 +138,34 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
         btnAdd.setOnClickListener(new CardEditOrAddDialog(CardEditOrAddDialog.ADD,this, null, UNUSED));
 
         btnExportImport.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 // TODO: 2/21/2022 Add a proper import/export UI
-                exportData();
+                AlertDialog alertDialog = new AlertDialog.Builder(EditCards.this).create();
+                alertDialog.setTitle("Exporting and Importing Prayer Cards");
+                alertDialog.setMessage("Are you trying to import or export prayer cards?");
+                alertDialog.setCancelable(true);
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Import", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                         importCSV();
+                    }
+                });
+                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Export", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        exportData();
+                    }
+                });
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        alertDialog.dismiss();
+                    }
+                });
+                alertDialog.show();
+
             }
         });
 
@@ -200,17 +235,31 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
         }
     }
 
+    private void importCSV() {
+        if (ContextCompat.checkSelfPermission(EditCards.this,
+                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(EditCards.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, IMPORT_READ_PERMISSION_CODE);
+        } else {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("text/comma-separated-values");
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+            startActivityForResult(intent, IMPORT_FILE_CSV);
+            //Do the import
+        }
+    }
+
     private void exportData() {
         // TODO: 2/21/2022 Manage permission better - maybe provide rationale?
         if (ContextCompat.checkSelfPermission(EditCards.this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(EditCards.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION_CODE);
+            ActivityCompat.requestPermissions(EditCards.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, EXPORT_WRITE_PERMISSION_CODE);
         } else {
             Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("text/csv");
-            intent.putExtra(Intent.EXTRA_TITLE, "MyBackUp.csv");
-            startActivityForResult(intent, CREATE_FILE_CVS);
+            intent.setType("text/comma-separated-values");
+            intent.putExtra(Intent.EXTRA_TITLE, "PrayerCardsBackUp.csv");
+            startActivityForResult(intent, EXPORT_FILE_CSV);
         }
     }
 
@@ -345,12 +394,23 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == WRITE_PERMISSION_CODE)   {
-            if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                exportData();
-            } else  {
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
-            }
+        switch (requestCode)  {
+            case EXPORT_WRITE_PERMISSION_CODE:
+                if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    exportData();
+                } else  {
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case IMPORT_READ_PERMISSION_CODE:
+                if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    importCSV();
+                } else  {
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
         }
     }
 }
