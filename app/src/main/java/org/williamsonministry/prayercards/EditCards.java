@@ -26,7 +26,10 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -57,18 +60,18 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Uri uri = data.getData();
+        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
 
         switch (requestCode)    {
             case EXPORT_FILE_CSV:
                 if (resultCode == Activity.RESULT_OK)   {
-                    Uri uri = data.getData();
                     try {
                         OutputStream os = getContentResolver().openOutputStream(uri);
-                        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
                         String result = dataBaseHelper.saveToCSV(os);
 
                         Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                        shareIntent.setType("text/csv");
+                        shareIntent.setType("text/comma-separated-values");
                         shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
                         startActivityForResult(Intent.createChooser(shareIntent, "Backup"), SHARE_CVS_FILE);
 
@@ -79,8 +82,21 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
                 }
                 break;
             case IMPORT_FILE_CSV:
-                Uri uri = data.getData();
-                Toast.makeText(this, uri.toString(), Toast.LENGTH_SHORT).show();
+                try {
+                    // TODO: 2/26/2022 This is probably very slow and superfluous with all the ways it saves and loads from the db 
+                    // TODO: 2/26/2022 Need to figure out the list order of new prayer cards. Something screwy is happening with order and rearraging them after importing. 
+                    dataBaseHelper.saveAllCards(adapter.getAllPrayerCards());
+                    InputStream is = getContentResolver().openInputStream(uri);
+                    String result = dataBaseHelper.importFromCSV(is);
+                    resetFilter();
+                    ArrayList<PrayerCard> allCards = dataBaseHelper.getAll();
+                    dataBaseHelper.saveOrder(allCards);
+                    adapter.setCards(dataBaseHelper.getAll());
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(EditCards.this, result, Toast.LENGTH_LONG).show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
             default:
                 break;
@@ -212,14 +228,7 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
         btnResetFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cbFilterAlways.setChecked(true);
-                cbFilterRotation.setChecked(true);
-                cbFilterRegSched.setChecked(true);
-                etFilterTags.setText("");
-                etNameSearch.setText("");
-                cbAllTags.setChecked(false);
-                adapter.setCards(applyFilter());
-                layoutFilter.setVisibility(View.GONE);
+                resetFilter();
             }
         });
 
@@ -233,6 +242,17 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
                 btnAdd.performClick();
             }
         }
+    }
+
+    private void resetFilter() {
+        cbFilterAlways.setChecked(true);
+        cbFilterRotation.setChecked(true);
+        cbFilterRegSched.setChecked(true);
+        etFilterTags.setText("");
+        etNameSearch.setText("");
+        cbAllTags.setChecked(false);
+        adapter.setCards(applyFilter());
+        layoutFilter.setVisibility(View.GONE);
     }
 
     private void importCSV() {

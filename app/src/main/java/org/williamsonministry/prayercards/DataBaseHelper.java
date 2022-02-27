@@ -16,14 +16,19 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String PRAYER_CARD_TABLE = "PRAYER_CARD_TABLE";
@@ -648,7 +653,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 //                File saveFile = new File(downloadDir, filename);
 //                FileWriter fw = new FileWriter(saveFile);
 
-                // TODO: 2/21/2022 What if there's special characters in the PrayerCards? Will they screw up my CSV? HMMM??? 
+                // TODO: 2/21/2022 What if there's special characters in the PrayerCards? Will they screw up my CSV? HMMM??? (the answer is yes, at least commas)
 
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
                 rowCount = c.getCount();
@@ -693,6 +698,39 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             }
 
         return "Export failed";
+    }
+
+    public String importFromCSV(InputStream is) throws IOException {
+        InputStreamReader isr = new InputStreamReader(is);
+        BufferedReader br = new BufferedReader(isr);
+
+        ArrayList<String[]> rows = new ArrayList<>();
+        String line;
+
+        br.readLine();
+
+        while ((line = br.readLine()) != null)  {
+            String[] row = line.split(",");
+            rows.add(row);
+        }
+
+        for (String[] row: rows)    {
+            int id = Integer.parseInt(row[0]);
+            int listOrder = Integer.parseInt(row[1]);
+            String prayerText = row[2];
+            String tags = row[3];
+            int maxFreq = Integer.parseInt(row[4]);
+            int multiMaxFreq = Integer.parseInt(row[5]);
+            boolean inRotation = Integer.parseInt(row[6]) == 1;
+            Date lastSeen = new Date(Long.parseLong(row[7]));
+            int viewsRemaining = Integer.parseInt(row[8]);
+            Date expiryDate = new Date(Long.parseLong(row[9]));
+            boolean isActive = Integer.parseInt(row[10]) == 1;
+
+            PrayerCard prayerCard = new PrayerCard(id, listOrder, prayerText, tags, maxFreq, multiMaxFreq, inRotation, lastSeen, viewsRemaining, expiryDate, isActive);
+            addOne(prayerCard);
+        }
+        return "Success";
     }
 }
 
