@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -713,6 +714,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             String[] row = line.split(",");
             rows.add(row);
         }
+        
+        ArrayList<PrayerCard> importedCards = new ArrayList<>();
 
         for (String[] row: rows)    {
             int id = Integer.parseInt(row[0]);
@@ -728,8 +731,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             boolean isActive = Integer.parseInt(row[10]) == 1;
 
             PrayerCard prayerCard = new PrayerCard(id, listOrder, prayerText, tags, maxFreq, multiMaxFreq, inRotation, lastSeen, viewsRemaining, expiryDate, isActive);
-            addOne(prayerCard);
+            importedCards.add(prayerCard);
         }
+        
+        Collections.sort(importedCards);
+
+        // TODO: 2/28/2022 I should give them all negative list orders to put them up the front, but I also need to add them to the arraylist of all cards in EditCards. 
+        for (PrayerCard p: importedCards){
+            addOne(p);
+        }
+
+        
         return "Success";
     }
 }
