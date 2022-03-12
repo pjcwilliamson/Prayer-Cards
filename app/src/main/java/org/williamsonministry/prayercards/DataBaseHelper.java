@@ -733,14 +733,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             PrayerCard prayerCard = new PrayerCard(id, listOrder, prayerText, tags, maxFreq, multiMaxFreq, inRotation, lastSeen, viewsRemaining, expiryDate, isActive);
             importedCards.add(prayerCard);
         }
-        
-        Collections.sort(importedCards);
 
         // TODO: 2/28/2022 I should give them all negative list orders to put them up the front, but I also need to add them to the arraylist of all cards in EditCards. 
-        for (PrayerCard p: importedCards){
-            addOne(p);
+        int size = importedCards.size();
+        for (int i = 0; i < size; i++){
+            int oldListOrder = importedCards.get(i).getListOrder();
+            importedCards.get(i).setListOrder(oldListOrder - size);
+            addOne(importedCards.get(i));
         }
-
         
         return "Success";
     }

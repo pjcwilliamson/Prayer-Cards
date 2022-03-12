@@ -60,12 +60,15 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Uri uri = data.getData();
+        Uri uri = null;
+        if (null != data) {
+            uri = data.getData();
+        }
         DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
 
-        switch (requestCode)    {
+        switch (requestCode) {
             case EXPORT_FILE_CSV:
-                if (resultCode == Activity.RESULT_OK)   {
+                if (resultCode == Activity.RESULT_OK) {
                     try {
                         OutputStream os = getContentResolver().openOutputStream(uri);
                         String result = dataBaseHelper.saveToCSV(os);
@@ -76,7 +79,7 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
                         startActivityForResult(Intent.createChooser(shareIntent, "Backup"), SHARE_CVS_FILE);
 
                         Toast.makeText(EditCards.this, result, Toast.LENGTH_LONG).show();
-                    } catch (FileNotFoundException e) {
+                    } catch (FileNotFoundException | NullPointerException e) {
                         e.printStackTrace();
                     }
                 }
@@ -84,17 +87,21 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
             case IMPORT_FILE_CSV:
                 try {
                     // TODO: 2/26/2022 This is probably very slow and superfluous with all the ways it saves and loads from the db 
-                    // TODO: 2/26/2022 Need to figure out the list order of new prayer cards. Something screwy is happening with order and rearraging them after importing. 
+                    // TODO: 2/26/2022 If I import, then rearrange, then import, then rearrage - it loses track. Why?
                     dataBaseHelper.saveAllCards(adapter.getAllPrayerCards());
                     InputStream is = getContentResolver().openInputStream(uri);
                     String result = dataBaseHelper.importFromCSV(is);
                     resetFilter();
                     ArrayList<PrayerCard> allCards = dataBaseHelper.getAll();
+                    for (int i = 0; i < allCards.size(); i++) {
+                        allCards.get(i).setListOrder(i);
+                    }
                     dataBaseHelper.saveOrder(allCards);
-                    adapter.setCards(dataBaseHelper.getAll());
-                    adapter.notifyDataSetChanged();
+                    ArrayList<PrayerCard> newAllCards = dataBaseHelper.getAll();
+                    adapter.setCards(newAllCards);
+                    adapter.setAllPrayerCards(newAllCards);
                     Toast.makeText(EditCards.this, result, Toast.LENGTH_LONG).show();
-                } catch (IOException e) {
+                } catch (IOException | NullPointerException e) {
                     e.printStackTrace();
                 }
                 break;
@@ -118,7 +125,7 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
 
         initViews();
 
-        adapter = new CardRecViewAdapter(this,this);
+        adapter = new CardRecViewAdapter(this, this);
         final DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
 
         editCardsRecView.setAdapter(adapter);
@@ -132,8 +139,8 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
         /*
         Inactivate any cards past their expiry
          */
-        for (int i = 0; i < allCardsNewListOrder.size(); i++)    {
-            if (allCardsNewListOrder.get(i).getExpiryDate().getTime() < Calendar.getInstance().getTimeInMillis() && allCardsNewListOrder.get(i).getExpiryDate().getTime() != UNUSED)    {
+        for (int i = 0; i < allCardsNewListOrder.size(); i++) {
+            if (allCardsNewListOrder.get(i).getExpiryDate().getTime() < Calendar.getInstance().getTimeInMillis() && allCardsNewListOrder.get(i).getExpiryDate().getTime() != UNUSED) {
                 allCardsNewListOrder.get(i).setActive(false);
             }
         }
@@ -143,20 +150,21 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
         btnOpenFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (layoutFilter.getVisibility() == View.GONE)  {
+                if (layoutFilter.getVisibility() == View.GONE) {
                     layoutFilter.setVisibility(View.VISIBLE);
-                } else if (layoutFilter.getVisibility() == View.VISIBLE)   {
+                } else if (layoutFilter.getVisibility() == View.VISIBLE) {
                     layoutFilter.setVisibility(View.GONE);
                 }
             }
         });
 
-        btnAdd.setOnClickListener(new CardEditOrAddDialog(CardEditOrAddDialog.ADD,this, null, UNUSED));
+        btnAdd.setOnClickListener(new CardEditOrAddDialog(CardEditOrAddDialog.ADD, this, null, UNUSED));
 
         btnExportImport.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
+                adapter.asyncSave();
                 // TODO: 2/21/2022 Add a proper import/export UI
                 AlertDialog alertDialog = new AlertDialog.Builder(EditCards.this).create();
                 alertDialog.setTitle("Exporting and Importing Prayer Cards");
@@ -165,7 +173,7 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
                 alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Import", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                         importCSV();
+                        importCSV();
                     }
                 });
                 alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Export", new DialogInterface.OnClickListener() {
@@ -200,9 +208,9 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
                         adapter.getAllPrayerCards().clear();
                         alertDialog.dismiss();
 
-                        if (success)    {
+                        if (success) {
                             Toast.makeText(EditCards.this, "Prayer Cards Cleared", Toast.LENGTH_SHORT).show();
-                        }   else    {
+                        } else {
                             Toast.makeText(EditCards.this, "Error", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -237,7 +245,7 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
         mItemTouchHelper.attachToRecyclerView(editCardsRecView);
 
         Intent intent = getIntent();
-        if (intent.getStringExtra(EDIT_STARTUP) != null){
+        if (intent.getStringExtra(EDIT_STARTUP) != null) {
             if (intent.getStringExtra(EDIT_STARTUP).equals("add")) {
                 btnAdd.performClick();
             }
@@ -288,13 +296,13 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
         //DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
         //ArrayList<PrayerCard> deckToDrawFilteredDeckFrom = dataBaseHelper.getAll();
         ArrayList<PrayerCard> filteredDeck = new ArrayList<>();
-        for (int i = 0; i < adapter.getAllPrayerCards().size(); i++)    {
+        for (int i = 0; i < adapter.getAllPrayerCards().size(); i++) {
             filteredDeck.add(adapter.getAllPrayerCards().get(i));
         }
         ArrayList<Integer> remove = new ArrayList<>();
         if (!cbFilterAlways.isChecked()) {
-            for (int i = filteredDeck.size()-1; i >= 0; i--)    {
-                if (filteredDeck.get(i).getMaxFrequency() == ALWAYS)  {
+            for (int i = filteredDeck.size() - 1; i >= 0; i--) {
+                if (filteredDeck.get(i).getMaxFrequency() == ALWAYS) {
                     remove.add(i);
                 }
             }
@@ -304,8 +312,8 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
             remove.clear();
         }
         if (!cbFilterRotation.isChecked()) {
-            for (int i = filteredDeck.size()-1; i >= 0; i--)    {
-                if (filteredDeck.get(i).isInRotation())  {
+            for (int i = filteredDeck.size() - 1; i >= 0; i--) {
+                if (filteredDeck.get(i).isInRotation()) {
                     remove.add(i);
                 }
             }
@@ -315,8 +323,8 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
             remove.clear();
         }
         if (!cbFilterRegSched.isChecked()) {
-            for (int i = filteredDeck.size()-1; i >= 0; i--)    {
-                if (filteredDeck.get(i).getMaxFrequency() > 0)  {
+            for (int i = filteredDeck.size() - 1; i >= 0; i--) {
+                if (filteredDeck.get(i).getMaxFrequency() > 0) {
                     remove.add(i);
                 }
             }
@@ -325,43 +333,43 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
             }
             remove.clear();
         }
-        if (!etFilterTags.getText().toString().equals(""))  {
+        if (!etFilterTags.getText().toString().equals("")) {
             ArrayList<String> filterTags = Utils.commaStringToArraylist(etFilterTags.getText().toString());
-            if (cbAllTags.isChecked())  {
-                    for (int i = filteredDeck.size()-1; i >= 0; i--)   {
-                        ArrayList<String> cardTags = Utils.commaStringToArraylist(filteredDeck.get(i).getTags());
-                        int numberOfMatchedTags = 0;
-                        for (String s: filterTags)  {
-                            int instance = 0;   //To avoid having the same tag multiple times counting as having multiple tags
-                            for (int j = 0; j < cardTags.size(); j++) {
-                                if (cardTags.get(j).equalsIgnoreCase(s)) {
-                                    if (instance == 0) {
-                                        numberOfMatchedTags++;
-                                    }
-                                    instance++;
+            if (cbAllTags.isChecked()) {
+                for (int i = filteredDeck.size() - 1; i >= 0; i--) {
+                    ArrayList<String> cardTags = Utils.commaStringToArraylist(filteredDeck.get(i).getTags());
+                    int numberOfMatchedTags = 0;
+                    for (String s : filterTags) {
+                        int instance = 0;   //To avoid having the same tag multiple times counting as having multiple tags
+                        for (int j = 0; j < cardTags.size(); j++) {
+                            if (cardTags.get(j).equalsIgnoreCase(s)) {
+                                if (instance == 0) {
+                                    numberOfMatchedTags++;
                                 }
+                                instance++;
                             }
                         }
-                        if (numberOfMatchedTags < filterTags.size())   {
-                            remove.add(i);
-                        }
                     }
+                    if (numberOfMatchedTags < filterTags.size()) {
+                        remove.add(i);
+                    }
+                }
                 for (int i : remove) {
                     filteredDeck.remove(i);
                 }
                 remove.clear();
-            }   else    {
-                for (int i = filteredDeck.size()-1; i >= 0; i--)   {
+            } else {
+                for (int i = filteredDeck.size() - 1; i >= 0; i--) {
                     ArrayList<String> cardTags = Utils.commaStringToArraylist(filteredDeck.get(i).getTags());
                     int numberOfMatchedTags = 0;
-                    for (String s: filterTags)  {
+                    for (String s : filterTags) {
                         for (int j = 0; j < cardTags.size(); j++) {
                             if (cardTags.get(j).equalsIgnoreCase(s)) {
                                 numberOfMatchedTags++;
                             }
                         }
                     }
-                    if (numberOfMatchedTags == 0)   {
+                    if (numberOfMatchedTags == 0) {
                         remove.add(i);
                     }
                 }
@@ -372,10 +380,10 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
             }
         }
 
-        if (!etNameSearch.getText().toString().equals(""))  {
+        if (!etNameSearch.getText().toString().equals("")) {
             CharSequence nameSearch = etNameSearch.getText().toString().toLowerCase().trim();
-            for (int i = filteredDeck.size()-1; i >= 0; i--)    {
-                if (!filteredDeck.get(i).getPrayerText().toLowerCase().contains(nameSearch))  {
+            for (int i = filteredDeck.size() - 1; i >= 0; i--) {
+                if (!filteredDeck.get(i).getPrayerText().toLowerCase().contains(nameSearch)) {
                     remove.add(i);
                 }
             }
@@ -414,18 +422,18 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        switch (requestCode)  {
+        switch (requestCode) {
             case EXPORT_WRITE_PERMISSION_CODE:
-                if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     exportData();
-                } else  {
+                } else {
                     Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case IMPORT_READ_PERMISSION_CODE:
-                if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     importCSV();
-                } else  {
+                } else {
                     Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                 }
                 break;
