@@ -86,21 +86,18 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
                 break;
             case IMPORT_FILE_CSV:
                 try {
-                    // TODO: 2/26/2022 This is probably very slow and superfluous with all the ways it saves and loads from the db 
-                    // TODO: 2/26/2022 If I import, then rearrange, then import, then rearrage - it loses track. Why?
                     dataBaseHelper.saveAllCards(adapter.getAllPrayerCards());
                     InputStream is = getContentResolver().openInputStream(uri);
                     String result = dataBaseHelper.importFromCSV(is);
-                    resetFilter();
                     ArrayList<PrayerCard> allCards = dataBaseHelper.getAll();
                     for (int i = 0; i < allCards.size(); i++) {
                         allCards.get(i).setListOrder(i);
                     }
                     dataBaseHelper.saveOrder(allCards);
-                    ArrayList<PrayerCard> newAllCards = dataBaseHelper.getAll();
-                    adapter.setCards(newAllCards);
-                    adapter.setAllPrayerCards(newAllCards);
                     Toast.makeText(EditCards.this, result, Toast.LENGTH_LONG).show();
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
                 } catch (IOException | NullPointerException e) {
                     e.printStackTrace();
                 }

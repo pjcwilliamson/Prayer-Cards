@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -654,8 +655,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 //                File saveFile = new File(downloadDir, filename);
 //                FileWriter fw = new FileWriter(saveFile);
 
-                // TODO: 2/21/2022 What if there's special characters in the PrayerCards? Will they screw up my CSV? HMMM??? (the answer is yes, at least commas)
-
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
                 rowCount = c.getCount();
                 colCount = c.getColumnCount();
@@ -679,10 +678,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                         c.moveToPosition(i);
 
                         for (int j = 0; j < colCount; j++) {
+                            String uneditedString = c.getString(j);
+                            String newString = Utils.replaceCommasAndNewLines(uneditedString);
                             if (j != colCount - 1)
-                                bw.write(c.getString(j) + ",");
+                                bw.write(newString + ",");
                             else
-                                bw.write(c.getString(j));
+                                bw.write(newString);
                         }
                         bw.newLine();
                     }
@@ -702,6 +703,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public String importFromCSV(InputStream is) throws IOException {
+
+        // TODO: 3/12/2022 Validate the file so it doesn't crash if it's not the right format 
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
 
@@ -720,8 +723,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         for (String[] row: rows)    {
             int id = Integer.parseInt(row[0]);
             int listOrder = Integer.parseInt(row[1]);
-            String prayerText = row[2];
-            String tags = row[3];
+            String prayerText = Utils.putCommasAndNewLinesBackIn(row[2]);
+            String tags = Utils.putCommasAndNewLinesBackIn(row[3]);
             int maxFreq = Integer.parseInt(row[4]);
             int multiMaxFreq = Integer.parseInt(row[5]);
             boolean inRotation = Integer.parseInt(row[6]) == 1;
@@ -734,15 +737,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             importedCards.add(prayerCard);
         }
 
-        // TODO: 2/28/2022 I should give them all negative list orders to put them up the front, but I also need to add them to the arraylist of all cards in EditCards. 
         int size = importedCards.size();
         for (int i = 0; i < size; i++){
             int oldListOrder = importedCards.get(i).getListOrder();
             importedCards.get(i).setListOrder(oldListOrder - size);
             addOne(importedCards.get(i));
         }
-        
-        return "Success";
+
+        return size + " Prayer Cards Successfully Imported";
     }
 }
 

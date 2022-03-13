@@ -132,7 +132,7 @@ public class DisplayCardsFragment extends Fragment {
         }
 
         /*
-        TODO: make this work properly! Use the ID of -100
+        To add a card while you're swiping
          */
         btnAddNewHere.setOnClickListener(new CardEditOrAddDialog(CardEditOrAddDialog.ADD, mContext, new PrayerCard(-100,-1,"", "",ALWAYS,-1,false,new Date(0),1,new Date(0),true), position));
 
