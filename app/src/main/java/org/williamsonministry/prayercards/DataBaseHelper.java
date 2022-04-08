@@ -105,7 +105,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
 
-        if (i < 2){
+        if (i < 2) {
             String createDeckTableStatement = "CREATE TABLE " + PRAYER_DECK_TABLE + " ("
                     + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + COLUMN_LIST_ORDER + " INTEGER, "
@@ -135,7 +135,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public long addOne(PrayerCard prayerCard)    {
+    public long addOne(PrayerCard prayerCard) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
@@ -157,7 +157,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return insert;
     }
 
-    public ArrayList<PrayerCard> getAll()    {
+    public ArrayList<PrayerCard> getAll() {
         ArrayList<PrayerCard> returnList = new ArrayList<>();
 
         //get data from db
@@ -168,7 +168,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         Cursor cursor = db.rawQuery(queryString, null);
 
-        if(cursor.moveToFirst()){   //true if there is a first entry ie. the db is not empty
+        if (cursor.moveToFirst()) {   //true if there is a first entry ie. the db is not empty
             // loop through cursor and create new customer objects for each row and put them in returnList
             do {
                 int prayerCardID = cursor.getInt(0);
@@ -184,7 +184,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 boolean isActive = cursor.getInt(10) == 1;
 
 
-                PrayerCard newPrayerCard = new PrayerCard(prayerCardID, listOrder, prayerText,tags,maxFreq,multiMaxFreq,isInRotation, new Date(lastSeen), viewsRemaining, new Date(expiryDate), isActive);
+                PrayerCard newPrayerCard = new PrayerCard(prayerCardID, listOrder, prayerText, tags, maxFreq, multiMaxFreq, isInRotation, new Date(lastSeen), viewsRemaining, new Date(expiryDate), isActive);
 
                 returnList.add(newPrayerCard);
 
@@ -201,7 +201,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return returnList;
     }
 
-    public boolean deleteByID(int id)   {
+    public boolean deleteByID(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(PRAYER_CARD_TABLE, COLUMN_ID + " = " + id, null);
         db.close();
@@ -211,7 +211,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public void cardViewed(int id) {
         PrayerCard prayerCard = getCardById(id);
         int views = prayerCard.getViewsRemaining() - 1;
-        if (views < 0)  {
+        if (views < 0) {
             views = -1;
         }
         int active = 1;
@@ -255,7 +255,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         Cursor cursor = db.rawQuery(queryString, null);
 
-        if(cursor.moveToFirst()){   //true if there is a first entry ie. the db is not empty
+        if (cursor.moveToFirst()) {   //true if there is a first entry ie. the db is not empty
             // loop through cursor and create new customer objects for each row and put them in returnList
             do {
                 int prayerCardID = cursor.getInt(0);
@@ -271,7 +271,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 boolean isActive = cursor.getInt(10) == 1;
 
 
-                PrayerCard newPrayerCard = new PrayerCard(prayerCardID, listOrder, prayerText,tags,maxFreq,multiMaxFreq,isInRotation, new Date(lastSeen), viewsRemaining, new Date(expiryDate), isActive);
+                PrayerCard newPrayerCard = new PrayerCard(prayerCardID, listOrder, prayerText, tags, maxFreq, multiMaxFreq, isInRotation, new Date(lastSeen), viewsRemaining, new Date(expiryDate), isActive);
 
                 lastSeenOrderList.add(newPrayerCard);
 
@@ -288,7 +288,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         ArrayList<PrayerCard> returnList = new ArrayList<PrayerCard>();
 
         for (int i = 0; i < lastSeenOrderList.size(); i++) {
-            if (lastSeenOrderList.get(i).isInRotation() && lastSeenOrderList.get(i).isActive())   {
+            if (lastSeenOrderList.get(i).isInRotation() && lastSeenOrderList.get(i).isActive()) {
                 returnList.add(lastSeenOrderList.get(i));
             }
         }
@@ -311,7 +311,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_ACTIVE, prayerCard.isActive());
         //cv.put(COLUMN_LIST_ORDER, prayerCard.getListOrder());
 
-        db.update(PRAYER_CARD_TABLE, cv,COLUMN_ID + " = " + id, null);
+        db.update(PRAYER_CARD_TABLE, cv, COLUMN_ID + " = " + id, null);
 
         String queryString = "SELECT * FROM " + PRAYER_CARD_TABLE + " WHERE " + COLUMN_ID + " = " + id;
 
@@ -319,7 +319,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         PrayerCard newPrayerCard = null;
 
-        if(cursor.moveToFirst()){   //true if there is a first entry ie. the db is not empty
+        if (cursor.moveToFirst()) {   //true if there is a first entry ie. the db is not empty
             // loop through cursor and create new customer objects for each row and put them in returnList
             do {
                 int prayerCardID = cursor.getInt(0);
@@ -334,7 +334,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 long expiryDate = cursor.getLong(9);
                 boolean isActive = cursor.getInt(10) == 1;
 
-                newPrayerCard = new PrayerCard(prayerCardID, listOrder, prayerText,tags,maxFreq,multiMaxFreq,isInRotation, new Date(lastSeen), viewsRemaining, new Date(expiryDate), isActive);
+                newPrayerCard = new PrayerCard(prayerCardID, listOrder, prayerText, tags, maxFreq, multiMaxFreq, isInRotation, new Date(lastSeen), viewsRemaining, new Date(expiryDate), isActive);
 
             } while (cursor.moveToNext()); //This while statement is true when there are still new lines
         } else {
@@ -355,7 +355,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public void saveOrder(ArrayList<PrayerCard> allPrayerCards) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        for( int i = 0; i < allPrayerCards.size(); i++){
+        for (int i = 0; i < allPrayerCards.size(); i++) {
             db.execSQL("UPDATE " + PRAYER_CARD_TABLE + " SET "
                     + COLUMN_LIST_ORDER + " = " + i
                     + " WHERE ID = " + allPrayerCards.get(i).getId());
@@ -370,7 +370,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         cv.put(COLUMN_ACTIVE, false);
 
-        db.update(PRAYER_CARD_TABLE, cv,COLUMN_ID + " = " + id, null);
+        db.update(PRAYER_CARD_TABLE, cv, COLUMN_ID + " = " + id, null);
         db.close();
     }
 
@@ -382,11 +382,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         if (resetViews) {
             cv.put(COLUMN_VIEWS_REMAINING, -1);
         }
-        if (resetExpiry)    {
+        if (resetExpiry) {
             cv.put(COLUMN_EXPIRY_DATE, -1);
         }
 
-        db.update(PRAYER_CARD_TABLE, cv,COLUMN_ID + " = " + id, null);
+        db.update(PRAYER_CARD_TABLE, cv, COLUMN_ID + " = " + id, null);
         db.close();
     }
 
@@ -428,7 +428,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         PrayerCard newPrayerCard = null;
 
-        if(cursor.moveToFirst()){   //true if there is a first entry ie. the db is not empty
+        if (cursor.moveToFirst()) {   //true if there is a first entry ie. the db is not empty
             // loop through cursor and create new customer objects for each row and put them in returnList
             do {
                 int prayerCardID = cursor.getInt(0);
@@ -444,7 +444,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 boolean isActive = cursor.getInt(10) == 1;
 
 
-                newPrayerCard = new PrayerCard(prayerCardID, listOrder, prayerText,tags,maxFreq,multiMaxFreq,isInRotation, new Date(lastSeen), viewsRemaining, new Date(expiryDate), isActive);
+                newPrayerCard = new PrayerCard(prayerCardID, listOrder, prayerText, tags, maxFreq, multiMaxFreq, isInRotation, new Date(lastSeen), viewsRemaining, new Date(expiryDate), isActive);
 
             } while (cursor.moveToNext()); //This while statement is true when there are still new lines
         } else {
@@ -479,7 +479,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 //                + COLUMN_ROTATION_POSITION + " INTEGER, "
 //                + COLUMN_ACTIVE + " BOOL)";
 
-        if(cursor.moveToFirst()){   //true if there is a first entry ie. the db is not empty
+        if (cursor.moveToFirst()) {   //true if there is a first entry ie. the db is not empty
             // loop through cursor and create new customer objects for each row and put them in returnList
             do {
                 int prayerDeckID = cursor.getInt(0);
@@ -494,7 +494,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
                 PrayerDeck newPrayerDeck = new PrayerDeck(prayerDeckID, listOrder, deckName, tags, mustHaveAllTags, maxInRotation, rotationPosition, isActive);
 
-                if (isActive)   {
+                if (isActive) {
                     returnList.add(newPrayerDeck);
                 } else {
                     inactiveList.add(newPrayerDeck);
@@ -510,7 +510,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
 
-        for (int i = 0; i<inactiveList.size(); i++) {
+        for (int i = 0; i < inactiveList.size(); i++) {
             returnList.add(inactiveList.get(i));
         }
 
@@ -520,7 +520,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public ArrayList<String> getDeckNames() {
         ArrayList<String> arrayListDeckNames = new ArrayList<>();
 
-        String queryString = "SELECT "+ COLUMN_DECK_NAME + " FROM " + PRAYER_DECK_TABLE + "\nORDER BY " + COLUMN_LIST_ORDER;
+        String queryString = "SELECT " + COLUMN_DECK_NAME + " FROM " + PRAYER_DECK_TABLE + "\nORDER BY " + COLUMN_LIST_ORDER;
 
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -611,7 +611,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         PrayerDeck newPrayerDeck = null;
 
-        if(cursor.moveToFirst()){   //true if there is a first entry ie. the db is not empty
+        if (cursor.moveToFirst()) {   //true if there is a first entry ie. the db is not empty
             // loop through cursor and create new customer objects for each row and put them in returnList
             do {
                 int prayerDeckID = cursor.getInt(0);
@@ -623,7 +623,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 int rotationPosition = cursor.getInt(6);
                 boolean isActive = cursor.getInt(7) == 1;
 
-                newPrayerDeck = new PrayerDeck(prayerDeckID, listOrder,deckName,tags,mustHaveAllTags,maxCardsInRotation,rotationPosition,isActive);
+                newPrayerDeck = new PrayerDeck(prayerDeckID, listOrder, deckName, tags, mustHaveAllTags, maxCardsInRotation, rotationPosition, isActive);
 
             } while (cursor.moveToNext()); //This while statement is true when there are still new lines
         } else {
@@ -641,70 +641,69 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         // TODO: 2/19/2022 Make this work better. May have to do checks if external storage exists etc. Got most this code from here:  https://parallelcodes.com/android-export-sqlite-database/, also here: https://stackoverflow.com/questions/31367270/exporting-sqlite-database-to-csv-file-in-android
 
 
-            SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
 
-            Cursor c = null;
+        Cursor c = null;
 
-            try {
-                c = db.rawQuery("SELECT * FROM " + PRAYER_CARD_TABLE, null);
-                int rowCount = 0;
-                int colCount = 0;
+        try {
+            c = db.rawQuery("SELECT * FROM " + PRAYER_CARD_TABLE, null);
+            int rowCount = 0;
+            int colCount = 0;
 //                File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 //                String filename = "MyBackUp.csv";
 //                // the name of the file to export with
 //                File saveFile = new File(downloadDir, filename);
 //                FileWriter fw = new FileWriter(saveFile);
 
-                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
-                rowCount = c.getCount();
-                colCount = c.getColumnCount();
-                if (rowCount > 0) {
-                    c.moveToFirst();
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
+            rowCount = c.getCount();
+            colCount = c.getColumnCount();
+            if (rowCount > 0) {
+                c.moveToFirst();
 
-                    for (int i = 0; i < colCount; i++) {
-                        if (i != colCount - 1) {
+                for (int i = 0; i < colCount; i++) {
+                    if (i != colCount - 1) {
 
-                            bw.write(c.getColumnName(i) + ",");
+                        bw.write(c.getColumnName(i) + ",");
 
-                        } else {
+                    } else {
 
-                            bw.write(c.getColumnName(i));
+                        bw.write(c.getColumnName(i));
 
-                        }
+                    }
+                }
+                bw.newLine();
+
+                for (int i = 0; i < rowCount; i++) {
+                    c.moveToPosition(i);
+
+                    for (int j = 0; j < colCount; j++) {
+                        String uneditedString = c.getString(j);
+                        String newString = Utils.replaceCommasAndNewLines(uneditedString);
+                        if (j != colCount - 1)
+                            bw.write(newString + ",");
+                        else
+                            bw.write(newString);
                     }
                     bw.newLine();
-
-                    for (int i = 0; i < rowCount; i++) {
-                        c.moveToPosition(i);
-
-                        for (int j = 0; j < colCount; j++) {
-                            String uneditedString = c.getString(j);
-                            String newString = Utils.replaceCommasAndNewLines(uneditedString);
-                            if (j != colCount - 1)
-                                bw.write(newString + ",");
-                            else
-                                bw.write(newString);
-                        }
-                        bw.newLine();
-                    }
-                    bw.flush();
-
-                    return "Exported Successfully.";
                 }
-            } catch (Exception ex) {
-                if (db.isOpen()) {
-                    db.close();
-                    return ex.getMessage();
-                }
+                bw.flush();
 
+                return "Exported Successfully.";
             }
+        } catch (Exception ex) {
+            if (db.isOpen()) {
+                db.close();
+                return ex.getMessage();
+            }
+
+        }
 
         return "Export failed";
     }
 
     public String importFromCSV(InputStream is) throws IOException {
 
-        // TODO: 3/12/2022 Validate the file so it doesn't crash if it's not the right format 
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
 
@@ -713,32 +712,36 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         br.readLine();
 
-        while ((line = br.readLine()) != null)  {
+        while ((line = br.readLine()) != null) {
             String[] row = line.split(",");
             rows.add(row);
         }
-        
+
         ArrayList<PrayerCard> importedCards = new ArrayList<>();
 
-        for (String[] row: rows)    {
-            int id = Integer.parseInt(row[0]);
-            int listOrder = Integer.parseInt(row[1]);
-            String prayerText = Utils.putCommasAndNewLinesBackIn(row[2]);
-            String tags = Utils.putCommasAndNewLinesBackIn(row[3]);
-            int maxFreq = Integer.parseInt(row[4]);
-            int multiMaxFreq = Integer.parseInt(row[5]);
-            boolean inRotation = Integer.parseInt(row[6]) == 1;
-            Date lastSeen = new Date(Long.parseLong(row[7]));
-            int viewsRemaining = Integer.parseInt(row[8]);
-            Date expiryDate = new Date(Long.parseLong(row[9]));
-            boolean isActive = Integer.parseInt(row[10]) == 1;
+        try {
+            for (String[] row : rows) {
+                int id = Integer.parseInt(row[0]);
+                int listOrder = Integer.parseInt(row[1]);
+                String prayerText = Utils.putCommasAndNewLinesBackIn(row[2]);
+                String tags = Utils.putCommasAndNewLinesBackIn(row[3]);
+                int maxFreq = Integer.parseInt(row[4]);
+                int multiMaxFreq = Integer.parseInt(row[5]);
+                boolean inRotation = Integer.parseInt(row[6]) == 1;
+                Date lastSeen = new Date(Long.parseLong(row[7]));
+                int viewsRemaining = Integer.parseInt(row[8]);
+                Date expiryDate = new Date(Long.parseLong(row[9]));
+                boolean isActive = Integer.parseInt(row[10]) == 1;
 
-            PrayerCard prayerCard = new PrayerCard(id, listOrder, prayerText, tags, maxFreq, multiMaxFreq, inRotation, lastSeen, viewsRemaining, expiryDate, isActive);
-            importedCards.add(prayerCard);
+                PrayerCard prayerCard = new PrayerCard(id, listOrder, prayerText, tags, maxFreq, multiMaxFreq, inRotation, lastSeen, viewsRemaining, expiryDate, isActive);
+                importedCards.add(prayerCard);
+            }
+        } catch (Exception e) {
+            return "CSV file incorrectly formatted.\n\nOnly import CSV files created through this app's export function.";
         }
 
         int size = importedCards.size();
-        for (int i = 0; i < size; i++){
+        for (int i = 0; i < size; i++) {
             int oldListOrder = importedCards.get(i).getListOrder();
             importedCards.get(i).setListOrder(oldListOrder - size);
             addOne(importedCards.get(i));

@@ -94,10 +94,19 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
                         allCards.get(i).setListOrder(i);
                     }
                     dataBaseHelper.saveOrder(allCards);
-                    Toast.makeText(EditCards.this, result, Toast.LENGTH_LONG).show();
-                    Intent intent = getIntent();
-                    finish();
-                    startActivity(intent);
+                    AlertDialog alertDialog = new AlertDialog.Builder(EditCards.this).create();
+                    alertDialog.setMessage(result);
+                    alertDialog.setCancelable(false);
+                    alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            alertDialog.dismiss();
+                            Intent intent = getIntent();
+                            finish();
+                            startActivity(intent);
+                        }
+                    });
+                    alertDialog.show();
                 } catch (IOException | NullPointerException e) {
                     e.printStackTrace();
                 }
@@ -157,39 +166,6 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
 
         btnAdd.setOnClickListener(new CardEditOrAddDialog(CardEditOrAddDialog.ADD, this, null, UNUSED));
 
-        btnExportImport.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                adapter.asyncSave();
-                // TODO: 2/21/2022 Add a proper import/export UI
-                AlertDialog alertDialog = new AlertDialog.Builder(EditCards.this).create();
-                alertDialog.setTitle("Exporting and Importing Prayer Cards");
-                alertDialog.setMessage("Are you trying to import or export prayer cards?");
-                alertDialog.setCancelable(true);
-                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Import", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        importCSV();
-                    }
-                });
-                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Export", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        exportData();
-                    }
-                });
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        alertDialog.dismiss();
-                    }
-                });
-                alertDialog.show();
-
-            }
-        });
-
         btnDeleteAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -247,6 +223,42 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
                 btnAdd.performClick();
             }
         }
+
+        btnExportImport.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                adapter.asyncSave();
+                String permissionText = "";
+                if (ContextCompat.checkSelfPermission(EditCards.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                    permissionText = "\n\nPlease give media permission in pop up or in app info.";
+                }
+                AlertDialog alertDialog = new AlertDialog.Builder(EditCards.this).create();
+                alertDialog.setTitle("Exporting and Importing Prayer Cards");
+                alertDialog.setMessage("Prayer Cards are exported and imported as CSV files. Only attempt to import CSV files created by this app." + permissionText);
+                alertDialog.setCancelable(true);
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Import", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        importCSV();
+                    }
+                });
+                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Export", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        exportData();
+                    }
+                });
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        alertDialog.dismiss();
+                    }
+                });
+                alertDialog.show();
+
+            }
+        });
     }
 
     private void resetFilter() {
@@ -275,7 +287,6 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
     }
 
     private void exportData() {
-        // TODO: 2/21/2022 Manage permission better - maybe provide rationale?
         if (ContextCompat.checkSelfPermission(EditCards.this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(EditCards.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, EXPORT_WRITE_PERMISSION_CODE);
