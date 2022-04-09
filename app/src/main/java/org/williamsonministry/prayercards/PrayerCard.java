@@ -3,7 +3,6 @@ package org.williamsonministry.prayercards;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 public class PrayerCard implements Comparable<PrayerCard>, Parcelable {

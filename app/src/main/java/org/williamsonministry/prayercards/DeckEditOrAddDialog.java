@@ -21,12 +21,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
-import static org.williamsonministry.prayercards.PrayerCard.ALWAYS;
-import static org.williamsonministry.prayercards.PrayerCard.DAILY;
-import static org.williamsonministry.prayercards.PrayerCard.MONTHLY;
-import static org.williamsonministry.prayercards.PrayerCard.UNUSED;
-import static org.williamsonministry.prayercards.PrayerCard.WEEKLY;
-
 public class DeckEditOrAddDialog implements View.OnClickListener {
 
     private final int dialogType;

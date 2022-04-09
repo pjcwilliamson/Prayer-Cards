@@ -3,8 +3,6 @@ package org.williamsonministry.prayercards;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.Date;
-
 public class PrayerDeck implements Parcelable {
     private int id;
     private int listOrder;

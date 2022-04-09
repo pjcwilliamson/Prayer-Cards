@@ -44,8 +44,6 @@ public class DeckRecViewAdapter extends RecyclerView.Adapter<DeckRecViewAdapter.
         return new DeckRecViewAdapter.ViewHolder(view);
     }
 
-    // TODO: 1/29/2022 Add async saving to Decks (copy from cards)
-
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {

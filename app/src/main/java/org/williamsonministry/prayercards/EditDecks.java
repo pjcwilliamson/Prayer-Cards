@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 
 import static org.williamsonministry.prayercards.PrayerCard.UNUSED;
 

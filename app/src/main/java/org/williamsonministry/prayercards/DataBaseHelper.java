@@ -1,26 +1,15 @@
 package org.williamsonministry.prayercards;
 
-import android.Manifest;
-import android.app.Activity;
-import android.bluetooth.le.ScanSettings;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Environment;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -28,9 +17,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String PRAYER_CARD_TABLE = "PRAYER_CARD_TABLE";
@@ -638,8 +625,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public String saveToCSV(OutputStream os) {
-        // TODO: 2/19/2022 Make this work better. May have to do checks if external storage exists etc. Got most this code from here:  https://parallelcodes.com/android-export-sqlite-database/, also here: https://stackoverflow.com/questions/31367270/exporting-sqlite-database-to-csv-file-in-android
-
 
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -649,11 +634,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             c = db.rawQuery("SELECT * FROM " + PRAYER_CARD_TABLE, null);
             int rowCount = 0;
             int colCount = 0;
-//                File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-//                String filename = "MyBackUp.csv";
-//                // the name of the file to export with
-//                File saveFile = new File(downloadDir, filename);
-//                FileWriter fw = new FileWriter(saveFile);
 
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
             rowCount = c.getCount();
