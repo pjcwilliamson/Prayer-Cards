@@ -290,7 +290,7 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
         private final TextView txtPrayerRequest;
         private final Button btnEdit;
         private final Button btnInActivate;
@@ -308,7 +308,11 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
             handleView = itemView.findViewById(R.id.imgDragHandle);
             btnRestore = itemView.findViewById(R.id.btnRestore);
             btnDeleteForever = itemView.findViewById(R.id.btnDeleteForever);
+        }
 
+        @Override
+        public void onItemClear() {
+            asyncSave();
         }
     }
 
@@ -319,7 +323,6 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
 
         if (toPosition >= positionFirstInactive && positionFirstInactive != UNUSED) {
             notifyDataSetChanged();
-            asyncSave();
             return false;
         } else {
 
@@ -358,8 +361,6 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
             }
 
             notifyItemMoved(fromPosition, toPosition);
-            asyncSave();
-
             return true;
         }
     }

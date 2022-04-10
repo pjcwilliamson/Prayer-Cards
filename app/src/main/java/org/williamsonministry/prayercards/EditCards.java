@@ -448,4 +448,5 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
                 break;
         }
     }
+    // TODO: 4/9/2022 Add tags to when back pressed and when mainactivity starts so I can get how long it takes from logcat
 }

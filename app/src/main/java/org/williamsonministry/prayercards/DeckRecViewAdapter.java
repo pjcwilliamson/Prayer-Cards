@@ -143,6 +143,7 @@ public class DeckRecViewAdapter extends RecyclerView.Adapter<DeckRecViewAdapter.
         }
     }
 
+    // TODO: 4/9/2022 Implement the ITHVH interface and asyncsave on itemclear 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView txtPrayerRequest;
         private final Button btnEdit;

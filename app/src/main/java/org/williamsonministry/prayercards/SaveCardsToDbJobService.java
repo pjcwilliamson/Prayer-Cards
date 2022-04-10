@@ -26,6 +26,7 @@ public class SaveCardsToDbJobService extends IntentService {
             ArrayList<PrayerCard> allCards = intent.getParcelableArrayListExtra(ALL_PRAYERCARDS_ARRAYLIST_KEY);
             DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
             dataBaseHelper.saveAllCards(allCards);
+            Log.d(TAG, "onHandleIntent: Save Ended");
         }
     }
 
