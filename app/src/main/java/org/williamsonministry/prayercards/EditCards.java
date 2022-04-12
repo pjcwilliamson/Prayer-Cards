@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -37,6 +38,7 @@ import static org.williamsonministry.prayercards.PrayerCard.ALWAYS;
 import static org.williamsonministry.prayercards.PrayerCard.UNUSED;
 
 public class EditCards extends AppCompatActivity implements OnStartDragListener {
+    private static final String TAG = "EditCards";
     private static final int EXPORT_FILE_CSV = 801;
     private static final int SHARE_CVS_FILE = 802;
     private static final int IMPORT_FILE_CSV = 803;
@@ -448,5 +450,10 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
                 break;
         }
     }
-    // TODO: 4/9/2022 Add tags to when back pressed and when mainactivity starts so I can get how long it takes from logcat
+
+    @Override
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed: Pressed");
+        super.onBackPressed();
+    }
 }

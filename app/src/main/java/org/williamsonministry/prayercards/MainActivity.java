@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,6 +23,7 @@ import static org.williamsonministry.prayercards.DeckSwipe.DECK_PARAMS;
 
 public class MainActivity extends AppCompatActivity {
     public static final String EDIT_STARTUP = "editStartup";
+    private static final String TAG = "MainActivity";
 
 //    Using this YouTube video to figure out ViewPager https://www.youtube.com/watch?v=7aLCWbe6Awk
 
@@ -168,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        Log.d(TAG, "onResume: Resumed");
         super.onResume();
         DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
 
