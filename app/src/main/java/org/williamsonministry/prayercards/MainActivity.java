@@ -1,12 +1,10 @@
 package org.williamsonministry.prayercards;
 
+import static org.williamsonministry.prayercards.DeckSwipe.DECK_PARAMS;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,12 +14,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
-import static org.williamsonministry.prayercards.DeckSwipe.DECK_PARAMS;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
     public static final String EDIT_STARTUP = "editStartup";
     private static final String TAG = "MainActivity";
 
@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton btnEditCards, btnNewCard, btnEditDecks, btnInfo;
     private Spinner spSelectDeck;
     private ArrayAdapter<String> deckArrayAdapter;
+    private boolean isSaveFinished;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +63,11 @@ public class MainActivity extends AppCompatActivity {
         editor3.putBoolean("FIRST_OPEN", true);
         editor3.apply();
 
+        SharedPreferences sp4 = getSharedPreferences("SAVE_FINISH", MODE_PRIVATE);
+        SharedPreferences.Editor editor4 = sp4.edit();
+        editor4.putBoolean("SAVE_FINISH", true);
+        editor4.apply();
+
         btnInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,38 +89,56 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // TODO: 4/14/2022 Implement a callback so we can't go back into EditCards until it's finished saving. May be easier just to use shared preferences
+
         btnEditDecks.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, EditDecks.class);
-                startActivity(intent);
+                if (checkIfSaveFinished()) {
+                    Intent intent = new Intent(MainActivity.this, EditDecks.class);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(MainActivity.this, "Failed to open", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         btnPrayerStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String deckName = spSelectDeck.getSelectedItem().toString();
-                Intent intent = new Intent(MainActivity.this, DeckSwipe.class);
-                intent.putExtra(DECK_PARAMS, deckName);
-                startActivity(intent);
+                if (checkIfSaveFinished()) {
+                    String deckName = spSelectDeck.getSelectedItem().toString();
+                    Intent intent = new Intent(MainActivity.this, DeckSwipe.class);
+                    intent.putExtra(DECK_PARAMS, deckName);
+                    startActivity(intent);
+                } else  {
+                    Toast.makeText(MainActivity.this, "Failed to open", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         btnNewCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, EditCards.class);
-                intent.putExtra(EDIT_STARTUP, "add");
-                startActivity(intent);
+                if (checkIfSaveFinished()) {
+                    Intent intent = new Intent(MainActivity.this, EditCards.class);
+                    intent.putExtra(EDIT_STARTUP, "add");
+                    startActivity(intent);
+                } else  {
+                    Toast.makeText(MainActivity.this, "Failed to open", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         btnEditCards.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, EditCards.class);
-                startActivity(intent);
+                if (checkIfSaveFinished()) {
+                    Intent intent = new Intent(MainActivity.this, EditCards.class);
+                    startActivity(intent);
+                } else  {
+                    Toast.makeText(MainActivity.this, "Failed to open", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -157,6 +181,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private boolean checkIfSaveFinished() {
+        SharedPreferences sp5 = getSharedPreferences("SAVE_FINISH", MODE_PRIVATE);
+        isSaveFinished = sp5.getBoolean("SAVE_FINISH", false);
+        if (!isSaveFinished) {
+            Toast.makeText(MainActivity.this, "Please Wait...", Toast.LENGTH_SHORT).show();
+        }
+        while (!sp5.getBoolean("SAVE_FINISH", false)) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                break;
+            }
+        }
+        isSaveFinished = sp5.getBoolean("SAVE_FINISH", false);
+        return isSaveFinished;
     }
 
     private void initViews() {

@@ -27,6 +27,7 @@ public class EditDecks extends AppCompatActivity implements OnStartDragListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_decks);
 
+
         initViews();
 
         adapter = new DeckRecViewAdapter(this, this);
