@@ -37,7 +37,8 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Log.d(TAG, "onCreate: Started");
+        
         initViews();
 
         SharedPreferences sp3 = getSharedPreferences("FIRST_OPEN", MODE_PRIVATE);
@@ -88,9 +89,7 @@ public class MainActivity extends AppCompatActivity{
                 aDHelp.show();
             }
         });
-
-        // TODO: 4/14/2022 Implement a callback so we can't go back into EditCards until it's finished saving. May be easier just to use shared preferences
-
+        
         btnEditDecks.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -31,12 +31,6 @@ public class SaveDecksToDbJobService extends IntentService {
             ArrayList<PrayerDeck> allDecks = intent.getParcelableArrayListExtra(ALL_PRAYERDECKS_ARRAYLIST_KEY);
             DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
             dataBaseHelper.saveAllDecks(allDecks);
-            // TODO: 4/20/2022 Delete this deck testing code
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             editor4.putBoolean("SAVE_FINISH", true);
             editor4.apply();
             Log.d(TAG, "onHandleIntent: Save Finished");

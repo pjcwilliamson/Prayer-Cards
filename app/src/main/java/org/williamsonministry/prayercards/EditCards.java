@@ -456,4 +456,10 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
         Log.d(TAG, "onBackPressed: Pressed");
         super.onBackPressed();
     }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume: Resumed");
+        super.onResume();
+    }
 }
