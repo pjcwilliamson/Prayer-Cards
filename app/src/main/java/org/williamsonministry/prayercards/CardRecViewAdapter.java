@@ -312,6 +312,12 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
 
         @Override
         public void onItemClear() {
+
+            //This is trying to fix a rare bug when I think two cards get the same list order somehow. Hard to recreate
+            for (int i = 0; i < allPrayerCards.size(); i++) {
+                allPrayerCards.get(i).setListOrder(i);
+            }
+
             asyncSave();
         }
     }

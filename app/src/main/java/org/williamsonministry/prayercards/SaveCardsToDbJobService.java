@@ -1,6 +1,7 @@
 package org.williamsonministry.prayercards;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -31,6 +32,13 @@ public class SaveCardsToDbJobService extends IntentService {
             ArrayList<PrayerCard> allCards = intent.getParcelableArrayListExtra(ALL_PRAYERCARDS_ARRAYLIST_KEY);
             DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
             dataBaseHelper.saveAllCards(allCards);
+
+//            try {
+//                Thread.sleep(5000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+
             editor4.putBoolean("SAVE_FINISH", true);
             editor4.apply();
             Log.d(TAG, "onHandleIntent: Save Ended");
