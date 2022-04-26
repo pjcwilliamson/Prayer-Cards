@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 
 import java.util.Date;
@@ -132,7 +130,7 @@ public class DisplayCardsFragment extends Fragment {
         }
 
         /*
-        TODO: make this work properly! Use the ID of -100
+        To add a card while you're swiping
          */
         btnAddNewHere.setOnClickListener(new CardEditOrAddDialog(CardEditOrAddDialog.ADD, mContext, new PrayerCard(-100,-1,"", "",ALWAYS,-1,false,new Date(0),1,new Date(0),true), position));
 

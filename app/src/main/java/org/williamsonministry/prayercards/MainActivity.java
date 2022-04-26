@@ -1,33 +1,29 @@
 package org.williamsonministry.prayercards;
 
+import static org.williamsonministry.prayercards.DeckSwipe.DECK_PARAMS;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CursorAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.ArrayList;
 
-import static org.williamsonministry.prayercards.DeckSwipe.DECK_PARAMS;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
     public static final String EDIT_STARTUP = "editStartup";
+    private static final String TAG = "MainActivity";
 
 //    Using this YouTube video to figure out ViewPager https://www.youtube.com/watch?v=7aLCWbe6Awk
 
@@ -35,12 +31,14 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton btnEditCards, btnNewCard, btnEditDecks, btnInfo;
     private Spinner spSelectDeck;
     private ArrayAdapter<String> deckArrayAdapter;
+    private boolean isSaveFinished;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Log.d(TAG, "onCreate: Started");
+        
         initViews();
 
         SharedPreferences sp3 = getSharedPreferences("FIRST_OPEN", MODE_PRIVATE);
@@ -48,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         if (!hasBeenOpened) {
             AlertDialog aDHelp = new AlertDialog.Builder(MainActivity.this).create();
             aDHelp.setTitle("Info");
-            aDHelp.setMessage("This is an app to help you keep track of things you want to be praying for.\n\n"+
+            aDHelp.setMessage("This is an app to help you keep track of things you want to be praying for.\n\n" +
                     "With this app you can create digital prayer cards. Some things you may want to pray for every time you pray, other things" +
                     " you may want to be praying for more occasionally. Sometimes you may want to pray for something a few times " +
                     "over a few weeks, such as when someone gives you a prayer request. This app can accommodate however you want to be praying!\n\n" +
@@ -66,12 +64,17 @@ public class MainActivity extends AppCompatActivity {
         editor3.putBoolean("FIRST_OPEN", true);
         editor3.apply();
 
+        SharedPreferences sp4 = getSharedPreferences("SAVE_FINISH", MODE_PRIVATE);
+        SharedPreferences.Editor editor4 = sp4.edit();
+        editor4.putBoolean("SAVE_FINISH", true);
+        editor4.apply();
+
         btnInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AlertDialog aDHelp = new AlertDialog.Builder(MainActivity.this).create();
                 aDHelp.setTitle("Info");
-                aDHelp.setMessage("This is an app to help you keep track of things you want to be praying for.\n\n"+
+                aDHelp.setMessage("This is an app to help you keep track of things you want to be praying for.\n\n" +
                         "With this app you can create digital prayer cards. Some things you may want to pray for every time you pray, other things" +
                         " you may want to be praying for more occasionally. Sometimes you may want to pray for something a few times " +
                         "over a few weeks, such as when someone gives you a prayer request. This app can accommodate however you want to be praying!\n\n" +
@@ -86,39 +89,55 @@ public class MainActivity extends AppCompatActivity {
                 aDHelp.show();
             }
         });
-
+        
         btnEditDecks.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, EditDecks.class);
-                startActivity(intent);
+                if (checkIfSaveFinished()) {
+                    Intent intent = new Intent(MainActivity.this, EditDecks.class);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(MainActivity.this, "Failed to open", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         btnPrayerStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String deckName = spSelectDeck.getSelectedItem().toString();
-                Intent intent = new Intent(MainActivity.this,DeckSwipe.class);
-                intent.putExtra(DECK_PARAMS, deckName);
-                startActivity(intent);
+                if (checkIfSaveFinished()) {
+                    String deckName = spSelectDeck.getSelectedItem().toString();
+                    Intent intent = new Intent(MainActivity.this, DeckSwipe.class);
+                    intent.putExtra(DECK_PARAMS, deckName);
+                    startActivity(intent);
+                } else  {
+                    Toast.makeText(MainActivity.this, "Failed to open", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         btnNewCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, EditCards.class);
-                intent.putExtra(EDIT_STARTUP, "add");
-                startActivity(intent);
+                if (checkIfSaveFinished()) {
+                    Intent intent = new Intent(MainActivity.this, EditCards.class);
+                    intent.putExtra(EDIT_STARTUP, "add");
+                    startActivity(intent);
+                } else  {
+                    Toast.makeText(MainActivity.this, "Failed to open", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         btnEditCards.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, EditCards.class);
-                startActivity(intent);
+                if (checkIfSaveFinished()) {
+                    Intent intent = new Intent(MainActivity.this, EditCards.class);
+                    startActivity(intent);
+                } else  {
+                    Toast.makeText(MainActivity.this, "Failed to open", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -128,18 +147,15 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sp = getSharedPreferences("LAST_PRAYER_PLAN", Context.MODE_PRIVATE);
 
-        String lastDeckName = sp.getString("LAST_PRAYER_PLAN","CJkjd&ijv33dcsaDRF$#vH%$435");
+        String lastDeckName = sp.getString("LAST_PRAYER_PLAN", null);
 
-        int lastPlanOrder;
+        int lastPlanOrder = 0;
 
-        if (lastDeckName.equals("CJkjd&ijv33dcsaDRF$#vH%$435")) {
-            lastPlanOrder = 0;
-        }   else    {
-            PrayerDeck lastDeckSelected = dataBaseHelper.getDeckByName(lastDeckName);
-            if (null != lastDeckSelected) {
-                lastPlanOrder = lastDeckSelected.getListOrder();
-            } else  {
-                lastPlanOrder = 0;
+        if (null != lastDeckName) {
+            for (int i = 0; i < deckNameArrayList.size(); i++) {
+                if (lastDeckName.equals(deckNameArrayList.get(i))) {
+                    lastPlanOrder = i;
+                }
             }
         }
 
@@ -166,6 +182,24 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private boolean checkIfSaveFinished() {
+        SharedPreferences sp5 = getSharedPreferences("SAVE_FINISH", MODE_PRIVATE);
+        isSaveFinished = sp5.getBoolean("SAVE_FINISH", false);
+        if (!isSaveFinished) {
+            Toast.makeText(MainActivity.this, "Please Wait...", Toast.LENGTH_SHORT).show();
+        }
+        while (!sp5.getBoolean("SAVE_FINISH", false)) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                break;
+            }
+        }
+        isSaveFinished = sp5.getBoolean("SAVE_FINISH", false);
+        return isSaveFinished;
+    }
+
     private void initViews() {
         btnPrayerStart = findViewById(R.id.btnStartPrayer);
         btnNewCard = findViewById(R.id.btnNewCard);
@@ -177,6 +211,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        Log.d(TAG, "onResume: Resumed");
         super.onResume();
         DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
 
@@ -184,18 +219,15 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sp = getSharedPreferences("LAST_PRAYER_PLAN", Context.MODE_PRIVATE);
 
-        String lastDeckName = sp.getString("LAST_PRAYER_PLAN","CJkjd&ijv33dcsaDRF$#vH%$435");
+        String lastDeckName = sp.getString("LAST_PRAYER_PLAN", null);
 
-        int lastPlanOrder;
+        int lastPlanOrder = 0;
 
-        if (lastDeckName.equals("CJkjd&ijv33dcsaDRF$#vH%$435")) {
-            lastPlanOrder = 0;
-        }   else    {
-            PrayerDeck lastDeckSelected = dataBaseHelper.getDeckByName(lastDeckName);
-            if (null != lastDeckSelected) {
-                lastPlanOrder = lastDeckSelected.getListOrder();
-            } else  {
-                lastPlanOrder = 0;
+        if (null != lastDeckName) {
+            for (int i = 0; i < deckNameArrayList.size(); i++) {
+                if (lastDeckName.equals(deckNameArrayList.get(i))) {
+                    lastPlanOrder = i;
+                }
             }
         }
 

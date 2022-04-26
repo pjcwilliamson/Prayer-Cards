@@ -400,6 +400,7 @@ public class CardEditOrAddDialog implements View.OnClickListener {
                         }
                     }
                     ((EditCards) mContext).getAdapter().notifyDataSetChanged();
+                    ((EditCards) mContext).getAdapter().asyncSave();
                     alertDialog.dismiss();
                 }
 

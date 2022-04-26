@@ -2,14 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.1"
 
     defaultConfig {
         applicationId "org.williamsonministry.prayercards"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 6
-        versionName '1.2.3'
+        versionCode 11
+        versionName '1.4.3'
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }

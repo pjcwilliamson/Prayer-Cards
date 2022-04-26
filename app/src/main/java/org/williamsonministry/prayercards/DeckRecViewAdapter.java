@@ -3,8 +3,7 @@ package org.williamsonministry.prayercards;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.os.Handler;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,23 +17,18 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.view.MotionEventCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.logging.LogRecord;
 
-import static org.williamsonministry.prayercards.PrayerCard.UNUSED;
+import static org.williamsonministry.prayercards.SaveDecksToDbJobService.ALL_PRAYERDECKS_ARRAYLIST_KEY;
 
 public class DeckRecViewAdapter extends RecyclerView.Adapter<DeckRecViewAdapter.ViewHolder> implements ItemTouchHelperAdapter {
 
     private ArrayList<PrayerDeck> allDecks;
     private final Context mContext;
     private final OnStartDragListener mDragStartListener;
-    Handler handler = new Handler();
-    Runnable runnable;
-    int delay = 1000;
 
     public DeckRecViewAdapter(Context mContext, OnStartDragListener dragStartListener) {
         this.mContext = mContext;
@@ -76,20 +70,10 @@ public class DeckRecViewAdapter extends RecyclerView.Adapter<DeckRecViewAdapter.
                 alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-//                        int x = -1;
-//                        int Id = currentPrayerCards.get(holder.getAdapterPosition()).getId();
-//                        for (int j = 0; j < allPrayerCards.size(); j++)   {
-//                            if (allPrayerCards.get(j).getId() == Id)    {
-//                                x = j;
-//                            }
-//                        }
-//                        allPrayerCards.remove(x);
-//                        for (int k = 0; k < allPrayerCards.size(); k++) {
-//                            allPrayerCards.get(k).setListOrder(k);
-//                        }
                         allDecks.remove(holder.getAdapterPosition());
                         Toast.makeText(mContext, "Prayer Plan Deleted", Toast.LENGTH_SHORT).show();
                         notifyDataSetChanged();
+                        asyncSave();
                     }
                 });
                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Cancel", new DialogInterface.OnClickListener() {
@@ -116,13 +100,17 @@ public class DeckRecViewAdapter extends RecyclerView.Adapter<DeckRecViewAdapter.
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     mDragStartListener.onStartDrag(holder);
                 }
-//                if (MotionEventCompat.getActionMasked(motionEvent) == MotionEvent.ACTION_DOWN)  {
-//                    mDragStartListener.onStartDrag(holder);
-//                }
                 return false;
             }
         });
     }
+
+    public void asyncSave() {
+        Intent intent = new Intent(mContext, SaveDecksToDbJobService.class);
+        intent.putParcelableArrayListExtra(ALL_PRAYERDECKS_ARRAYLIST_KEY, allDecks);
+        mContext.startService(intent);
+    }
+
 
     @Override
     public int getItemCount() {
@@ -144,6 +132,7 @@ public class DeckRecViewAdapter extends RecyclerView.Adapter<DeckRecViewAdapter.
         resetListOrder();
 
         notifyItemMoved(fromPosition, toPosition);
+        asyncSave();
 
         return true;
     }
@@ -154,7 +143,7 @@ public class DeckRecViewAdapter extends RecyclerView.Adapter<DeckRecViewAdapter.
         }
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
         private final TextView txtPrayerRequest;
         private final Button btnEdit;
         private final Button btnInActivate;
@@ -175,6 +164,11 @@ public class DeckRecViewAdapter extends RecyclerView.Adapter<DeckRecViewAdapter.
             btnRestore = itemView.findViewById(R.id.btnRestore);
             btnDeleteForever = itemView.findViewById(R.id.btnDeleteForever);
 
+        }
+
+        @Override
+        public void onItemClear() {
+            asyncSave();
         }
     }
 

@@ -3,6 +3,7 @@ package org.williamsonministry.prayercards;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,7 +16,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
-import androidx.core.view.MotionEventCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.williamsonministry.prayercards.PrayerCard.UNUSED;
+import static org.williamsonministry.prayercards.SaveCardsToDbJobService.ALL_PRAYERCARDS_ARRAYLIST_KEY;
 
 public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.ViewHolder> implements ItemTouchHelperAdapter {
 
@@ -34,12 +35,14 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
     private final OnStartDragListener mDragStartListener;
     private int positionFirstInactive;
 
+
     public CardRecViewAdapter(Context mContext, OnStartDragListener dragStartListener) {
         this.mContext = mContext;
         this.mDragStartListener = dragStartListener;
         DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
         allPrayerCards = dataBaseHelper.getAll();
     }
+
 
     public int getPositionFirstInactive() {
         return positionFirstInactive;
@@ -76,14 +79,14 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
     @Override
     public void onBindViewHolder(@NonNull final CardRecViewAdapter.ViewHolder holder, final int position) {
 
-        if (!currentPrayerCards.get(holder.getAdapterPosition()).isActive())   {
+        if (!currentPrayerCards.get(holder.getAdapterPosition()).isActive()) {
             holder.btnInActivate.setVisibility(View.GONE);
             holder.handleView.setVisibility(View.GONE);
             holder.btnDeleteForever.setVisibility(View.VISIBLE);
             holder.btnRestore.setVisibility(View.VISIBLE);
             holder.btnEdit.setVisibility(View.GONE);
             holder.parent.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorLightGrey));
-        } else  {
+        } else {
             holder.btnInActivate.setVisibility(View.VISIBLE);
             holder.handleView.setVisibility(View.VISIBLE);
             holder.btnDeleteForever.setVisibility(View.GONE);
@@ -97,7 +100,7 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
         holder.btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CardEditOrAddDialog editDialog = new CardEditOrAddDialog(CardEditOrAddDialog.EDIT,mContext,currentPrayerCards.get(holder.getAdapterPosition()),holder.getAdapterPosition());
+                CardEditOrAddDialog editDialog = new CardEditOrAddDialog(CardEditOrAddDialog.EDIT, mContext, currentPrayerCards.get(holder.getAdapterPosition()), holder.getAdapterPosition());
                 editDialog.onClick(holder.btnEdit);
             }
         });
@@ -113,8 +116,8 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
                     public void onClick(DialogInterface dialogInterface, int i) {
                         int x = -1;
                         int Id = currentPrayerCards.get(holder.getAdapterPosition()).getId();
-                        for (int j = 0; j < allPrayerCards.size(); j++)   {
-                            if (allPrayerCards.get(j).getId() == Id)    {
+                        for (int j = 0; j < allPrayerCards.size(); j++) {
+                            if (allPrayerCards.get(j).getId() == Id) {
                                 x = j;
                             }
                         }
@@ -126,6 +129,7 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
                         Toast.makeText(mContext, "Prayer Card Deleted", Toast.LENGTH_SHORT).show();
                         setCards(currentPrayerCards);
                         notifyDataSetChanged();
+                        asyncSave();
                     }
                 });
                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Cancel", new DialogInterface.OnClickListener() {
@@ -142,13 +146,14 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
                         currentPrayerCards.get(holder.getAdapterPosition()).setActive(false);
                         int Id = currentPrayerCards.get(holder.getAdapterPosition()).getId();
 
-                        for (int j = 0; j < allPrayerCards.size(); j++)   {
-                            if (allPrayerCards.get(j).getId() == Id)    {
+                        for (int j = 0; j < allPrayerCards.size(); j++) {
+                            if (allPrayerCards.get(j).getId() == Id) {
                                 allPrayerCards.get(j).setActive(false);
                             }
                         }
                         setCards(currentPrayerCards);
                         notifyDataSetChanged();
+                        asyncSave();
                     }
                 });
                 alertDialog.show();
@@ -166,21 +171,21 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                         int Id = currentPrayerCards.get(holder.getAdapterPosition()).getId();
-                        for (int j=0;j<allPrayerCards.size();j++)   {
-                            if (allPrayerCards.get(j).getId() == Id)    {
+                        for (int j = 0; j < allPrayerCards.size(); j++) {
+                            if (allPrayerCards.get(j).getId() == Id) {
                                 allPrayerCards.get(j).setActive(true);
                             }
                         }
-                        if (currentPrayerCards.get(holder.getAdapterPosition()).getViewsRemaining() == 0)  {
-                            for (int j=0;j<allPrayerCards.size();j++)   {
-                                if (allPrayerCards.get(j).getId() == Id)    {
+                        if (currentPrayerCards.get(holder.getAdapterPosition()).getViewsRemaining() == 0) {
+                            for (int j = 0; j < allPrayerCards.size(); j++) {
+                                if (allPrayerCards.get(j).getId() == Id) {
                                     allPrayerCards.get(j).setViewsRemaining(-1);
                                 }
                             }
                         }
-                        if (currentPrayerCards.get(holder.getAdapterPosition()).getExpiryDate().getTime() < Calendar.getInstance().getTimeInMillis())  {
-                            for (int j=0;j<allPrayerCards.size();j++)   {
-                                if (allPrayerCards.get(j).getId() == Id)    {
+                        if (currentPrayerCards.get(holder.getAdapterPosition()).getExpiryDate().getTime() < Calendar.getInstance().getTimeInMillis()) {
+                            for (int j = 0; j < allPrayerCards.size(); j++) {
+                                if (allPrayerCards.get(j).getId() == Id) {
                                     allPrayerCards.get(j).setExpiryDate(new Date(UNUSED));
                                 }
                             }
@@ -188,6 +193,7 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
 
                         setCards(((EditCards) mContext).applyFilter());
                         notifyDataSetChanged();
+                        asyncSave();
                     }
                 });
 
@@ -211,8 +217,8 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
                     public void onClick(DialogInterface dialogInterface, int i) {
                         int x = -1;
                         int Id = currentPrayerCards.get(holder.getAdapterPosition()).getId();
-                        for (int j=0;j<allPrayerCards.size();j++)   {
-                            if (allPrayerCards.get(j).getId() == Id)    {
+                        for (int j = 0; j < allPrayerCards.size(); j++) {
+                            if (allPrayerCards.get(j).getId() == Id) {
                                 x = j;
                             }
                         }
@@ -224,6 +230,7 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
                         Toast.makeText(mContext, "Prayer Card Deleted", Toast.LENGTH_SHORT).show();
                         setCards(currentPrayerCards);
                         notifyDataSetChanged();
+                        asyncSave();
                     }
                 });
                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Cancel", new DialogInterface.OnClickListener() {
@@ -242,12 +249,15 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     mDragStartListener.onStartDrag(holder);
                 }
-//                if (MotionEventCompat.getActionMasked(motionEvent) == MotionEvent.ACTION_DOWN)  {
-//                    mDragStartListener.onStartDrag(holder);
-//                }
                 return false;
             }
         });
+    }
+
+    public void asyncSave() {
+        Intent intent = new Intent(mContext, SaveCardsToDbJobService.class);
+        intent.putParcelableArrayListExtra(ALL_PRAYERCARDS_ARRAYLIST_KEY, allPrayerCards);
+        mContext.startService(intent);
     }
 
     @Override
@@ -259,7 +269,7 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
         positionFirstInactive = UNUSED;
         List<Integer> toRemove = new ArrayList<>();
         ArrayList<PrayerCard> toAdd = new ArrayList<>();
-        for (int i = 0; i < prayerCards.size(); i++)    {
+        for (int i = 0; i < prayerCards.size(); i++) {
             if (!prayerCards.get(i).isActive()) {
                 PrayerCard pc = prayerCards.get(i);
                 toRemove.add(i);
@@ -268,7 +278,7 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
             }
         }
 
-        for (int j = toRemove.size()-1; j >= 0; j--)   {
+        for (int j = toRemove.size() - 1; j >= 0; j--) {
             int x = toRemove.get(j);
             prayerCards.remove(x);
         }
@@ -280,7 +290,7 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
         private final TextView txtPrayerRequest;
         private final Button btnEdit;
         private final Button btnInActivate;
@@ -298,56 +308,66 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
             handleView = itemView.findViewById(R.id.imgDragHandle);
             btnRestore = itemView.findViewById(R.id.btnRestore);
             btnDeleteForever = itemView.findViewById(R.id.btnDeleteForever);
+        }
 
+        @Override
+        public void onItemClear() {
+
+            //This is trying to fix a rare bug when I think two cards get the same list order somehow. Hard to recreate
+            for (int i = 0; i < allPrayerCards.size(); i++) {
+                allPrayerCards.get(i).setListOrder(i);
+            }
+
+            asyncSave();
         }
     }
 
-    @Override       //This is from https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-b9456d2b1aaf
+    @Override
+    //This is from https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-b9456d2b1aaf
     public boolean onItemMove(int fromPosition, int toPosition, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
 //         The code of what actually happens when a item is dragged.
 
         if (toPosition >= positionFirstInactive && positionFirstInactive != UNUSED) {
             notifyDataSetChanged();
             return false;
-        }   else    {
-
-        int fromId = currentPrayerCards.get(fromPosition).getId();
-        int toId = currentPrayerCards.get(toPosition).getId();
-        int fromListOrder = -1;
-        int toListOrder = -1;
-
-        for (int i = 0; i < allPrayerCards.size(); i++){
-            if (allPrayerCards.get(i).getId() == fromId)    {
-                fromListOrder = allPrayerCards.get(i).getListOrder();
-            }
-            if (allPrayerCards.get(i).getId() == toId)    {
-                toListOrder = allPrayerCards.get(i).getListOrder();
-            }
-        }
-
-        if (fromPosition < toPosition) {
-            for (int i = fromPosition; i < toPosition; i++) {
-                Collections.swap(currentPrayerCards, i, i + 1);
-            }
-            for (int i = fromListOrder; i < toListOrder; i++)   {
-                allPrayerCards.get(i).setListOrder(i+1);
-                allPrayerCards.get(i+1).setListOrder(i);
-                Collections.swap(allPrayerCards, i, i + 1);
-            }
         } else {
-            for (int i = fromPosition; i > toPosition; i--) {
-                Collections.swap(currentPrayerCards, i, i - 1);
-            }
-            for (int i = fromListOrder; i > toListOrder; i--)   {
-                allPrayerCards.get(i).setListOrder(i-1);
-                allPrayerCards.get(i-1).setListOrder(i);
-                Collections.swap(allPrayerCards, i, i - 1);
-            }
-        }
 
-        notifyItemMoved(fromPosition, toPosition);
+            int fromId = currentPrayerCards.get(fromPosition).getId();
+            int toId = currentPrayerCards.get(toPosition).getId();
+            int fromListOrder = -1;
+            int toListOrder = -1;
 
-        return true;
+            for (int i = 0; i < allPrayerCards.size(); i++) {
+                if (allPrayerCards.get(i).getId() == fromId) {
+                    fromListOrder = allPrayerCards.get(i).getListOrder();
+                }
+                if (allPrayerCards.get(i).getId() == toId) {
+                    toListOrder = allPrayerCards.get(i).getListOrder();
+                }
+            }
+
+            if (fromPosition < toPosition) {
+                for (int i = fromPosition; i < toPosition; i++) {
+                    Collections.swap(currentPrayerCards, i, i + 1);
+                }
+                for (int i = fromListOrder; i < toListOrder; i++) {
+                    allPrayerCards.get(i).setListOrder(i + 1);
+                    allPrayerCards.get(i + 1).setListOrder(i);
+                    Collections.swap(allPrayerCards, i, i + 1);
+                }
+            } else {
+                for (int i = fromPosition; i > toPosition; i--) {
+                    Collections.swap(currentPrayerCards, i, i - 1);
+                }
+                for (int i = fromListOrder; i > toListOrder; i--) {
+                    allPrayerCards.get(i).setListOrder(i - 1);
+                    allPrayerCards.get(i - 1).setListOrder(i);
+                    Collections.swap(allPrayerCards, i, i - 1);
+                }
+            }
+
+            notifyItemMoved(fromPosition, toPosition);
+            return true;
         }
     }
 }

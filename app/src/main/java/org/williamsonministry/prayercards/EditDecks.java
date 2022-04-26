@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 
 import static org.williamsonministry.prayercards.PrayerCard.UNUSED;
 
@@ -27,6 +26,7 @@ public class EditDecks extends AppCompatActivity implements OnStartDragListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_decks);
+
 
         initViews();
 
@@ -86,19 +86,5 @@ public class EditDecks extends AppCompatActivity implements OnStartDragListener 
     @Override
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
         mItemTouchHelper.startDrag(viewHolder);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
-        dataBaseHelper.saveAllDecks(adapter.getAllDecks());
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
-        dataBaseHelper.saveAllDecks(adapter.getAllDecks());
     }
 }
