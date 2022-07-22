@@ -37,9 +37,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_MAX_IN_ROTATION = "MAX_IN_ROTATION";
     public static final String COLUMN_ROTATION_POSITION = "ROTATION_POSITION";
     public static final String PRAYER_DECK_TABLE = "PRAYER_DECK_TABLE";
+    public static final String COLUMN_ANSWERED = "ANSWERED";
+    public static final String COLUMN_INCLUDE_ANSWERED = "INCLUDE_ANSWERED";
+    public static final String COLUMN_INCLUDE_UNANSWERED = "INCLUDE_UNANSWERED";
 
     public DataBaseHelper(@Nullable Context context) {
-        super(context, "prayercard.db", null, 2);
+        super(context, "prayercard.db", null, 3);
     }
 
     // TODO: 7/21/2022 Update Database for Answered Prayers
@@ -58,7 +61,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + COLUMN_LAST_SEEN + " INTEGER, "
                 + COLUMN_VIEWS_REMAINING + " INTEGER, "
                 + COLUMN_EXPIRY_DATE + " INTEGER, "
-                + COLUMN_ACTIVE + " BOOL)";
+                + COLUMN_ACTIVE + " BOOL,"
+                + COLUMN_ANSWERED + " BOOL)";
 
         db.execSQL(createTableStatement);
 
@@ -70,7 +74,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + COLUMN_ALL_TAGS + " BOOL, "
                 + COLUMN_MAX_IN_ROTATION + " INTEGER, "
                 + COLUMN_ROTATION_POSITION + " INTEGER, "
-                + COLUMN_ACTIVE + " BOOL)";
+                + COLUMN_ACTIVE + " BOOL,"
+                + COLUMN_INCLUDE_ANSWERED + " BOOL,"
+                + COLUMN_INCLUDE_UNANSWERED + " BOOL)";
 
         db.execSQL(createDeckTableStatement);
 
@@ -123,6 +129,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             cv.put(COLUMN_ACTIVE, true);
 
             db.insert(PRAYER_DECK_TABLE, null, cv);
+        }
+        if (i < 3)  {
+            // TODO: 7/22/2022 Add code to add Answered Prayer info. Prolly load cards and decks onto memory, delete it all, and start again!
         }
     }
 
