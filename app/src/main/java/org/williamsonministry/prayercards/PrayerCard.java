@@ -17,6 +17,7 @@ public class PrayerCard implements Comparable<PrayerCard>, Parcelable {
     private int viewsRemaining; //number of times yet to view card. -1 for infinite.
     private Date expiryDate;
     private boolean isActive;
+    private boolean isAnswered;
 
     public static final int ALWAYS = 0;
     public static final int UNUSED = -1;
@@ -24,7 +25,22 @@ public class PrayerCard implements Comparable<PrayerCard>, Parcelable {
     public static final int WEEKLY = 2;
     public static final int MONTHLY = 3;
 
-    public PrayerCard(int id, int listOrder, String prayerText, String tags, int maxFrequency, int multipleMaxFreq, boolean isInRotation, Date date, int viewsRemaining, Date expiryDate, boolean isActive) {
+//    public PrayerCard(int id, int listOrder, String prayerText, String tags, int maxFrequency, int multipleMaxFreq, boolean isInRotation, Date date, int viewsRemaining, Date expiryDate, boolean isActive) {
+//        this.id = id;
+//        this.listOrder = listOrder;
+//        this.prayerText = prayerText;
+//        this.tags = tags;
+//        this.maxFrequency = maxFrequency;
+//        this.multipleMaxFreq = multipleMaxFreq;
+//        this.isInRotation = isInRotation;
+//        this.lastSeen = date;
+//        this.viewsRemaining = viewsRemaining;
+//        this.expiryDate = expiryDate;
+//        this.isActive = isActive;
+//        isAnswered = false;
+//    }
+
+    public PrayerCard(int id, int listOrder, String prayerText, String tags, int maxFrequency, int multipleMaxFreq, boolean isInRotation, Date lastSeen, int viewsRemaining, Date expiryDate, boolean isActive, boolean isAnswered) {
         this.id = id;
         this.listOrder = listOrder;
         this.prayerText = prayerText;
@@ -32,10 +48,11 @@ public class PrayerCard implements Comparable<PrayerCard>, Parcelable {
         this.maxFrequency = maxFrequency;
         this.multipleMaxFreq = multipleMaxFreq;
         this.isInRotation = isInRotation;
-        this.lastSeen = date;
+        this.lastSeen = lastSeen;
         this.viewsRemaining = viewsRemaining;
         this.expiryDate = expiryDate;
         this.isActive = isActive;
+        this.isAnswered = isAnswered;
     }
 
     protected PrayerCard(Parcel in) {
@@ -50,6 +67,7 @@ public class PrayerCard implements Comparable<PrayerCard>, Parcelable {
         viewsRemaining = in.readInt();
         expiryDate = new Date (in.readLong());
         isActive = in.readByte() != 0;
+        isAnswered = in.readByte() != 0;
     }
 
     @Override
@@ -65,6 +83,7 @@ public class PrayerCard implements Comparable<PrayerCard>, Parcelable {
         dest.writeInt(viewsRemaining);
         dest.writeLong(expiryDate.getTime());
         dest.writeByte((byte) (isActive ? 1 : 0));
+        dest.writeByte((byte) (isAnswered ? 1 : 0));
     }
 
     @Override
@@ -103,6 +122,7 @@ public class PrayerCard implements Comparable<PrayerCard>, Parcelable {
                 ", viewsRemaining=" + viewsRemaining +
                 ", expiryDate=" + expiryDate +
                 ", isActive=" + isActive +
+                ", isAnswered=" + isAnswered +
                 '}';
     }
 
@@ -192,5 +212,13 @@ public class PrayerCard implements Comparable<PrayerCard>, Parcelable {
 
     public void setLastSeen(Date lastSeen) {
         this.lastSeen = lastSeen;
+    }
+
+    public boolean isAnswered() {
+        return isAnswered;
+    }
+
+    public void setAnswered(boolean answered) {
+        isAnswered = answered;
     }
 }

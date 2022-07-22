@@ -50,7 +50,7 @@
             android:text="@string/prayer_request_here_and_this_is_a_very_long_text_to_include"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnEditCard"
+            app:layout_constraintEnd_toStartOf="@+id/btnThisPrayerAnswered"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -59,6 +59,17 @@
             android:scrollHorizontally="true"
             android:id="@+id/txtPrayerRequest"
             />
+
+        <Button
+            android:id="@+id/btnThisPrayerAnswered"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="78dp"
+            android:background="@drawable/ic_tick"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btnEditCard"

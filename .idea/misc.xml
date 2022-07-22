@@ -3,7 +3,15 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/activity_add_card.xml" value="0.55" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/activity_deck_swipe.xml" value="0.55" />
         <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/activity_edit_cards.xml" value="0.55" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/activity_edit_decks.xml" value="0.55" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/activity_main.xml" value="0.55" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/deck_edit_layout_dialog.xml" value="0.55" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/edit_card_card.xml" value="0.55" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/edit_layout_dialog.xml" value="0.55" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/fragment_display_cards.xml" value="0.55" />
       </map>
     </option>
   </component>

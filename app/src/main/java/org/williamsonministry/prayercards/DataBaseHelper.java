@@ -42,6 +42,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         super(context, "prayercard.db", null, 2);
     }
 
+    // TODO: 7/21/2022 Update Database for Answered Prayers
+
     // this is called the first time a database is accessed. There should be code in here to create a new database
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -75,6 +77,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         /*
         Add a default Prayer Deck
          */
+
+        // TODO: 7/21/2022 Add a new default called "answered prayers included" and "answered prayers only"
         ContentValues cv = new ContentValues();
 
         cv.put(COLUMN_LIST_ORDER, -1);
