@@ -44,9 +44,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public DataBaseHelper(@Nullable Context context) {
         super(context, "prayercard.db", null, 3);
     }
-
-    // TODO: 7/21/2022 Update Database for Answered Prayers
-
     // this is called the first time a database is accessed. There should be code in here to create a new database
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -81,10 +78,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL(createDeckTableStatement);
 
         /*
-        Add a default Prayer Deck
+        Add default Prayer Decks
          */
-
-        // TODO: 7/21/2022 Add a new default called "answered prayers included" and "answered prayers only"
         ContentValues cv = new ContentValues();
 
         cv.put(COLUMN_LIST_ORDER, -1);
@@ -94,8 +89,36 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_MAX_IN_ROTATION, 3);
         cv.put(COLUMN_ROTATION_POSITION, PrayerDeck.END);
         cv.put(COLUMN_ACTIVE, true);
+        cv.put(COLUMN_INCLUDE_ANSWERED, false);
+        cv.put(COLUMN_INCLUDE_UNANSWERED, true);
+
+        ContentValues cv1 = new ContentValues();
+
+        cv1.put(COLUMN_LIST_ORDER, -1);
+        cv1.put(COLUMN_DECK_NAME, "Answered Prayers");
+        cv1.put(COLUMN_TAGS, "");
+        cv1.put(COLUMN_ALL_TAGS, false);
+        cv1.put(COLUMN_MAX_IN_ROTATION, 3);
+        cv1.put(COLUMN_ROTATION_POSITION, PrayerDeck.END);
+        cv1.put(COLUMN_ACTIVE, true);
+        cv1.put(COLUMN_INCLUDE_ANSWERED, true);
+        cv1.put(COLUMN_INCLUDE_UNANSWERED, false);
+
+        ContentValues cv2 = new ContentValues();
+
+        cv2.put(COLUMN_LIST_ORDER, -1);
+        cv2.put(COLUMN_DECK_NAME, "Answered Prayers Included");
+        cv2.put(COLUMN_TAGS, "");
+        cv2.put(COLUMN_ALL_TAGS, false);
+        cv2.put(COLUMN_MAX_IN_ROTATION, 3);
+        cv2.put(COLUMN_ROTATION_POSITION, PrayerDeck.END);
+        cv2.put(COLUMN_ACTIVE, true);
+        cv2.put(COLUMN_INCLUDE_ANSWERED, true);
+        cv2.put(COLUMN_INCLUDE_UNANSWERED, true);
 
         db.insert(PRAYER_DECK_TABLE, null, cv);
+        db.insert(PRAYER_DECK_TABLE, null, cv1);
+        db.insert(PRAYER_DECK_TABLE, null, cv2);
     }
 
     // this is called if the database version number changes. It prevents previous users apps from breaking when you change the database design
@@ -131,7 +154,40 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             db.insert(PRAYER_DECK_TABLE, null, cv);
         }
         if (i < 3)  {
-            // TODO: 7/22/2022 Add code to add Answered Prayer info. Prolly load cards and decks onto memory, delete it all, and start again!
+            String addAnsweredColumn, addIncludeAnsweredColumn, addIncludeUnansweredColumn;
+            addAnsweredColumn = "ALTER TABLE " + PRAYER_CARD_TABLE + " ADD COLUMN " + COLUMN_ANSWERED + " BOOL DEFAULT 1" ;
+            addIncludeAnsweredColumn = "ALTER TABLE " + PRAYER_DECK_TABLE + " ADD COLUMN " + COLUMN_INCLUDE_ANSWERED + " BOOL DEFAULT 0";
+            addIncludeUnansweredColumn = "ALTER TABLE " + PRAYER_DECK_TABLE + " ADD COLUMN " + COLUMN_INCLUDE_UNANSWERED + " BOOL DEFAULT 1";
+            db.execSQL(addAnsweredColumn);
+            db.execSQL(addIncludeAnsweredColumn);
+            db.execSQL(addIncludeUnansweredColumn);
+
+            ContentValues cv1 = new ContentValues();
+
+            cv1.put(COLUMN_LIST_ORDER, -1);
+            cv1.put(COLUMN_DECK_NAME, "Answered Prayers");
+            cv1.put(COLUMN_TAGS, "");
+            cv1.put(COLUMN_ALL_TAGS, false);
+            cv1.put(COLUMN_MAX_IN_ROTATION, 3);
+            cv1.put(COLUMN_ROTATION_POSITION, PrayerDeck.END);
+            cv1.put(COLUMN_ACTIVE, true);
+            cv1.put(COLUMN_INCLUDE_ANSWERED, true);
+            cv1.put(COLUMN_INCLUDE_UNANSWERED, false);
+
+            ContentValues cv2 = new ContentValues();
+
+            cv2.put(COLUMN_LIST_ORDER, -1);
+            cv2.put(COLUMN_DECK_NAME, "Answered Prayers Included");
+            cv2.put(COLUMN_TAGS, "");
+            cv2.put(COLUMN_ALL_TAGS, false);
+            cv2.put(COLUMN_MAX_IN_ROTATION, 3);
+            cv2.put(COLUMN_ROTATION_POSITION, PrayerDeck.END);
+            cv2.put(COLUMN_ACTIVE, true);
+            cv2.put(COLUMN_INCLUDE_ANSWERED, true);
+            cv2.put(COLUMN_INCLUDE_UNANSWERED, true);
+
+            db.insert(PRAYER_DECK_TABLE, null, cv1);
+            db.insert(PRAYER_DECK_TABLE, null, cv2);
         }
     }
 
@@ -149,6 +205,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_EXPIRY_DATE, prayerCard.getExpiryDate().getTime());
         cv.put(COLUMN_ACTIVE, prayerCard.isActive());
         cv.put(COLUMN_LIST_ORDER, prayerCard.getListOrder());
+        cv.put(COLUMN_ANSWERED, prayerCard.isAnswered());
 
         long insert = db.insert(PRAYER_CARD_TABLE, null, cv);
 
@@ -182,9 +239,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 int viewsRemaining = cursor.getInt(8);
                 long expiryDate = cursor.getLong(9);
                 boolean isActive = cursor.getInt(10) == 1;
+                boolean isAnswered = cursor.getInt(11) == 1;
 
 
-                PrayerCard newPrayerCard = new PrayerCard(prayerCardID, listOrder, prayerText, tags, maxFreq, multiMaxFreq, isInRotation, new Date(lastSeen), viewsRemaining, new Date(expiryDate), isActive);
+                PrayerCard newPrayerCard = new PrayerCard(prayerCardID, listOrder, prayerText, tags, maxFreq, multiMaxFreq, isInRotation, new Date(lastSeen), viewsRemaining, new Date(expiryDate), isActive, isAnswered);
 
                 returnList.add(newPrayerCard);
 
@@ -269,9 +327,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 int viewsRemaining = cursor.getInt(8);
                 long expiryDate = cursor.getLong(9);
                 boolean isActive = cursor.getInt(10) == 1;
+                boolean isAnswered = cursor.getInt(11) == 1;
 
 
-                PrayerCard newPrayerCard = new PrayerCard(prayerCardID, listOrder, prayerText, tags, maxFreq, multiMaxFreq, isInRotation, new Date(lastSeen), viewsRemaining, new Date(expiryDate), isActive);
+                PrayerCard newPrayerCard = new PrayerCard(prayerCardID, listOrder, prayerText, tags, maxFreq, multiMaxFreq, isInRotation, new Date(lastSeen), viewsRemaining, new Date(expiryDate), isActive, isAnswered);
 
                 lastSeenOrderList.add(newPrayerCard);
 
@@ -309,6 +368,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_VIEWS_REMAINING, prayerCard.getViewsRemaining());
         cv.put(COLUMN_EXPIRY_DATE, prayerCard.getExpiryDate().getTime());
         cv.put(COLUMN_ACTIVE, prayerCard.isActive());
+        cv.put(COLUMN_ANSWERED, prayerCard.isAnswered());
         //cv.put(COLUMN_LIST_ORDER, prayerCard.getListOrder());
 
         db.update(PRAYER_CARD_TABLE, cv, COLUMN_ID + " = " + id, null);
@@ -333,8 +393,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 int viewsRemaining = cursor.getInt(8);
                 long expiryDate = cursor.getLong(9);
                 boolean isActive = cursor.getInt(10) == 1;
+                boolean isAnswered = cursor.getInt(11) == 1;
 
-                newPrayerCard = new PrayerCard(prayerCardID, listOrder, prayerText, tags, maxFreq, multiMaxFreq, isInRotation, new Date(lastSeen), viewsRemaining, new Date(expiryDate), isActive);
+                newPrayerCard = new PrayerCard(prayerCardID, listOrder, prayerText, tags, maxFreq, multiMaxFreq, isInRotation, new Date(lastSeen), viewsRemaining, new Date(expiryDate), isActive, isAnswered);
 
             } while (cursor.moveToNext()); //This while statement is true when there are still new lines
         } else {
@@ -390,6 +451,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    /*
+    Clears the Prayercards table, and adds all the cards in the passed arraylist into the newly empty table
+     */
     public void saveAllCards(ArrayList<PrayerCard> allPrayerCards) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -410,6 +474,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             cv.put(COLUMN_VIEWS_REMAINING, allPrayerCards.get(i).getViewsRemaining());
             cv.put(COLUMN_EXPIRY_DATE, allPrayerCards.get(i).getExpiryDate().getTime());
             cv.put(COLUMN_ACTIVE, allPrayerCards.get(i).isActive());
+            cv.put(COLUMN_ANSWERED, allPrayerCards.get(i).isAnswered());
 
             db.insert(PRAYER_CARD_TABLE, null, cv);
         }
@@ -442,9 +507,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 int viewsRemaining = cursor.getInt(8);
                 long expiryDate = cursor.getLong(9);
                 boolean isActive = cursor.getInt(10) == 1;
+                boolean isAnswered = cursor.getInt(11) == 1;
 
 
-                newPrayerCard = new PrayerCard(prayerCardID, listOrder, prayerText, tags, maxFreq, multiMaxFreq, isInRotation, new Date(lastSeen), viewsRemaining, new Date(expiryDate), isActive);
+                newPrayerCard = new PrayerCard(prayerCardID, listOrder, prayerText, tags, maxFreq, multiMaxFreq, isInRotation, new Date(lastSeen), viewsRemaining, new Date(expiryDate), isActive, isAnswered);
 
             } while (cursor.moveToNext()); //This while statement is true when there are still new lines
         } else {
@@ -490,9 +556,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 int maxInRotation = cursor.getInt(5);
                 int rotationPosition = cursor.getInt(6);
                 boolean isActive = cursor.getInt(7) == 1;
+                boolean includesAnswered = cursor.getInt(8) == 1;
+                boolean includesUnanswered = cursor.getInt(9) == 1;
 
 
-                PrayerDeck newPrayerDeck = new PrayerDeck(prayerDeckID, listOrder, deckName, tags, mustHaveAllTags, maxInRotation, rotationPosition, isActive);
+                PrayerDeck newPrayerDeck = new PrayerDeck(prayerDeckID, listOrder, deckName, tags, mustHaveAllTags, maxInRotation, rotationPosition, isActive, includesAnswered, includesUnanswered);
 
                 if (isActive) {
                     returnList.add(newPrayerDeck);
@@ -553,6 +621,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             cv.put(COLUMN_ALL_TAGS, allDecks.get(i).isMustHaveAllTags());
             cv.put(COLUMN_ROTATION_POSITION, allDecks.get(i).getRotationPosition());
             cv.put(COLUMN_ACTIVE, allDecks.get(i).isActive());
+            cv.put(COLUMN_INCLUDE_ANSWERED, allDecks.get(i).isIncludeAnswered());
+            cv.put(COLUMN_INCLUDE_UNANSWERED, allDecks.get(i).isIncludeUnanswered());
 
             db.insert(PRAYER_DECK_TABLE, null, cv);
         }
@@ -571,6 +641,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_ROTATION_POSITION, newPrayerDeck.getRotationPosition());
         cv.put(COLUMN_ACTIVE, newPrayerDeck.isActive());
         cv.put(COLUMN_LIST_ORDER, newPrayerDeck.getListOrder());
+        cv.put(COLUMN_INCLUDE_ANSWERED, newPrayerDeck.isIncludeAnswered());
+        cv.put(COLUMN_INCLUDE_UNANSWERED, newPrayerDeck.isIncludeUnanswered());
 
         long insert = db.insert(PRAYER_DECK_TABLE, null, cv);
 
@@ -578,6 +650,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         return insert;
     }
+
+    // TODO: 7/23/2022 I've updated everything above here. Update below next. 
 
     public boolean resetDecks() {
         SQLiteDatabase db = this.getWritableDatabase();
