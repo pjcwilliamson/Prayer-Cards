@@ -155,7 +155,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
         if (i < 3)  {
             String addAnsweredColumn, addIncludeAnsweredColumn, addIncludeUnansweredColumn;
-            addAnsweredColumn = "ALTER TABLE " + PRAYER_CARD_TABLE + " ADD COLUMN " + COLUMN_ANSWERED + " BOOL DEFAULT 1" ;
+            addAnsweredColumn = "ALTER TABLE " + PRAYER_CARD_TABLE + " ADD COLUMN " + COLUMN_ANSWERED + " BOOL DEFAULT 0" ;
             addIncludeAnsweredColumn = "ALTER TABLE " + PRAYER_DECK_TABLE + " ADD COLUMN " + COLUMN_INCLUDE_ANSWERED + " BOOL DEFAULT 0";
             addIncludeUnansweredColumn = "ALTER TABLE " + PRAYER_DECK_TABLE + " ADD COLUMN " + COLUMN_INCLUDE_UNANSWERED + " BOOL DEFAULT 1";
             db.execSQL(addAnsweredColumn);
@@ -651,7 +651,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return insert;
     }
 
-    // TODO: 7/23/2022 I've updated everything above here. Update below next. 
 
     public boolean resetDecks() {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -667,8 +666,36 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_MAX_IN_ROTATION, 3);
         cv.put(COLUMN_ROTATION_POSITION, PrayerDeck.END);
         cv.put(COLUMN_ACTIVE, true);
+        cv.put(COLUMN_INCLUDE_ANSWERED, false);
+        cv.put(COLUMN_INCLUDE_UNANSWERED, true);
+
+        ContentValues cv1 = new ContentValues();
+
+        cv1.put(COLUMN_LIST_ORDER, -1);
+        cv1.put(COLUMN_DECK_NAME, "Answered Prayers");
+        cv1.put(COLUMN_TAGS, "");
+        cv1.put(COLUMN_ALL_TAGS, false);
+        cv1.put(COLUMN_MAX_IN_ROTATION, 3);
+        cv1.put(COLUMN_ROTATION_POSITION, PrayerDeck.END);
+        cv1.put(COLUMN_ACTIVE, true);
+        cv1.put(COLUMN_INCLUDE_ANSWERED, true);
+        cv1.put(COLUMN_INCLUDE_UNANSWERED, false);
+
+        ContentValues cv2 = new ContentValues();
+
+        cv2.put(COLUMN_LIST_ORDER, -1);
+        cv2.put(COLUMN_DECK_NAME, "Answered Prayers Included");
+        cv2.put(COLUMN_TAGS, "");
+        cv2.put(COLUMN_ALL_TAGS, false);
+        cv2.put(COLUMN_MAX_IN_ROTATION, 3);
+        cv2.put(COLUMN_ROTATION_POSITION, PrayerDeck.END);
+        cv2.put(COLUMN_ACTIVE, true);
+        cv2.put(COLUMN_INCLUDE_ANSWERED, true);
+        cv2.put(COLUMN_INCLUDE_UNANSWERED, true);
 
         db.insert(PRAYER_DECK_TABLE, null, cv);
+        db.insert(PRAYER_DECK_TABLE, null, cv1);
+        db.insert(PRAYER_DECK_TABLE, null, cv2);
 
         db.close();
         return true;
@@ -696,8 +723,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 int maxCardsInRotation = cursor.getInt(5);
                 int rotationPosition = cursor.getInt(6);
                 boolean isActive = cursor.getInt(7) == 1;
+                boolean includesAnswered = cursor.getInt(8) == 1;
+                boolean includesUnanswered = cursor.getInt(9) == 1;
 
-                newPrayerDeck = new PrayerDeck(prayerDeckID, listOrder, deckName, tags, mustHaveAllTags, maxCardsInRotation, rotationPosition, isActive);
+                newPrayerDeck = new PrayerDeck(prayerDeckID, listOrder, deckName, tags, mustHaveAllTags, maxCardsInRotation, rotationPosition, isActive, includesAnswered, includesUnanswered);
 
             } while (cursor.moveToNext()); //This while statement is true when there are still new lines
         } else {
@@ -786,6 +815,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         ArrayList<PrayerCard> importedCards = new ArrayList<>();
 
+        // TODO: 7/25/2022 Fix imports to be less sensitive for the date, but also for names not starting in equals to replace another symbol 
+
         try {
             for (String[] row : rows) {
                 int id = Integer.parseInt(row[0]);
@@ -799,8 +830,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 int viewsRemaining = Integer.parseInt(row[8]);
                 Date expiryDate = new Date(Long.parseLong(row[9]));
                 boolean isActive = Integer.parseInt(row[10]) == 1;
+                boolean isAnswered = Integer.parseInt(row[11]) == 1;
 
-                PrayerCard prayerCard = new PrayerCard(id, listOrder, prayerText, tags, maxFreq, multiMaxFreq, inRotation, lastSeen, viewsRemaining, expiryDate, isActive);
+                PrayerCard prayerCard = new PrayerCard(id, listOrder, prayerText, tags, maxFreq, multiMaxFreq, inRotation, lastSeen, viewsRemaining, expiryDate, isActive, isAnswered);
                 importedCards.add(prayerCard);
             }
         } catch (Exception e) {

@@ -390,7 +390,7 @@ public class CardEditOrAddDialog implements View.OnClickListener {
                 Date expiryDate = dateFromSpinners(spMonth.getSelectedItem().toString(), Integer.parseInt(spDay.getSelectedItem().toString()), Integer.parseInt(spYear.getSelectedItem().toString()), cbExpiryDate.isChecked());
 
                 if (dialogType == EDIT){
-                    PrayerCard editedPrayerCard = new PrayerCard(prayerCard.getId(), prayerCard.getListOrder(), etPrayerReq.getText().toString(), etTags.getText().toString(), maxFrequency, multiMaxFreq, radioGroup.getCheckedRadioButtonId() == R.id.rbRotation, prayerCard.getLastSeen() , viewsRemaining, expiryDate,true);
+                    PrayerCard editedPrayerCard = new PrayerCard(prayerCard.getId(), prayerCard.getListOrder(), etPrayerReq.getText().toString(), etTags.getText().toString(), maxFrequency, multiMaxFreq, radioGroup.getCheckedRadioButtonId() == R.id.rbRotation, prayerCard.getLastSeen() , viewsRemaining, expiryDate,true, prayerCard.isAnswered());
                     ((EditCards) mContext).getAdapter().getCurrentPrayerCards().set(position, editedPrayerCard);
                     for (int i = 0; i < ((EditCards) mContext).getAdapter().getAllPrayerCards().size(); i++) {
                         if (((EditCards) mContext).getAdapter().getAllPrayerCards().get(i).getId() == prayerCard.getId()) {
@@ -405,7 +405,7 @@ public class CardEditOrAddDialog implements View.OnClickListener {
                 }
 
                 if (dialogType == FRAGMENTEDIT){
-                    PrayerCard editedPrayerCard = new PrayerCard(prayerCard.getId(), prayerCard.getListOrder(), etPrayerReq.getText().toString(), etTags.getText().toString(), maxFrequency, multiMaxFreq, radioGroup.getCheckedRadioButtonId() == R.id.rbRotation, prayerCard.getLastSeen() , viewsRemaining, expiryDate,true);
+                    PrayerCard editedPrayerCard = new PrayerCard(prayerCard.getId(), prayerCard.getListOrder(), etPrayerReq.getText().toString(), etTags.getText().toString(), maxFrequency, multiMaxFreq, radioGroup.getCheckedRadioButtonId() == R.id.rbRotation, prayerCard.getLastSeen() , viewsRemaining, expiryDate,true, prayerCard.isAnswered());
 
                     DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
                     dataBaseHelper.editOneReturnPrayerCard(prayerCard.getId(),editedPrayerCard);

@@ -20,18 +20,18 @@ public class PrayerDeck implements Parcelable {
     public static final int MIXED = -1;
     public static final int ALL_ROTATION_CARDS = -1;
 
-//    public PrayerDeck(int id, int listOrder, String prayerPlanName, String tags, boolean mustHaveAllTags, int maxCardsInRotation, int rotationPosition, boolean isActive) {
-//        this.id = id;
-//        this.listOrder = listOrder;
-//        this.prayerPlanName = prayerPlanName;
-//        this.tags = tags;
-//        this.mustHaveAllTags = mustHaveAllTags;
-//        this.maxCardsInRotation = maxCardsInRotation;
-//        this.rotationPosition = rotationPosition;
-//        this.isActive = isActive;
-//        includeAnswered = false;
-//        includeUnanswered = true;
-//    }
+    public PrayerDeck(int id, int listOrder, String prayerPlanName, String tags, boolean mustHaveAllTags, int maxCardsInRotation, int rotationPosition, boolean isActive) {
+        this.id = id;
+        this.listOrder = listOrder;
+        this.prayerPlanName = prayerPlanName;
+        this.tags = tags;
+        this.mustHaveAllTags = mustHaveAllTags;
+        this.maxCardsInRotation = maxCardsInRotation;
+        this.rotationPosition = rotationPosition;
+        this.isActive = isActive;
+        includeAnswered = false;
+        includeUnanswered = true;
+    }
 
     public PrayerDeck(int id, int listOrder, String prayerPlanName, String tags, boolean mustHaveAllTags, int maxCardsInRotation, int rotationPosition, boolean isActive, boolean includeAnswered, boolean includeUnanswered) {
         this.id = id;

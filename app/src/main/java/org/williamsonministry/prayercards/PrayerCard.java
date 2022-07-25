@@ -25,20 +25,20 @@ public class PrayerCard implements Comparable<PrayerCard>, Parcelable {
     public static final int WEEKLY = 2;
     public static final int MONTHLY = 3;
 
-//    public PrayerCard(int id, int listOrder, String prayerText, String tags, int maxFrequency, int multipleMaxFreq, boolean isInRotation, Date date, int viewsRemaining, Date expiryDate, boolean isActive) {
-//        this.id = id;
-//        this.listOrder = listOrder;
-//        this.prayerText = prayerText;
-//        this.tags = tags;
-//        this.maxFrequency = maxFrequency;
-//        this.multipleMaxFreq = multipleMaxFreq;
-//        this.isInRotation = isInRotation;
-//        this.lastSeen = date;
-//        this.viewsRemaining = viewsRemaining;
-//        this.expiryDate = expiryDate;
-//        this.isActive = isActive;
-//        isAnswered = false;
-//    }
+    public PrayerCard(int id, int listOrder, String prayerText, String tags, int maxFrequency, int multipleMaxFreq, boolean isInRotation, Date date, int viewsRemaining, Date expiryDate, boolean isActive) {
+        this.id = id;
+        this.listOrder = listOrder;
+        this.prayerText = prayerText;
+        this.tags = tags;
+        this.maxFrequency = maxFrequency;
+        this.multipleMaxFreq = multipleMaxFreq;
+        this.isInRotation = isInRotation;
+        this.lastSeen = date;
+        this.viewsRemaining = viewsRemaining;
+        this.expiryDate = expiryDate;
+        this.isActive = isActive;
+        isAnswered = false;
+    }
 
     public PrayerCard(int id, int listOrder, String prayerText, String tags, int maxFrequency, int multipleMaxFreq, boolean isInRotation, Date lastSeen, int viewsRemaining, Date expiryDate, boolean isActive, boolean isAnswered) {
         this.id = id;
