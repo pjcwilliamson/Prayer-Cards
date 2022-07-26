@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity{
 //    Using this YouTube video to figure out ViewPager https://www.youtube.com/watch?v=7aLCWbe6Awk
 
     private Button btnPrayerStart;
-    private ImageButton btnEditCards, btnNewCard, btnEditDecks, btnInfo;
+    private ImageButton btnEditCards, btnNewCard, btnEditDecks, btnInfo, btnAnswered;
     private Spinner spSelectDeck;
     private ArrayAdapter<String> deckArrayAdapter;
     private boolean isSaveFinished;
@@ -141,6 +141,19 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
+        btnAnswered.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (checkIfSaveFinished())  {
+                    Intent intent = new Intent(MainActivity.this, EditCards.class);
+                    intent.putExtra(EDIT_STARTUP, "answered");
+                    startActivity(intent);
+                }   else    {
+                    Toast.makeText(MainActivity.this, "Failed to open", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
 
         ArrayList<String> deckNameArrayList = dataBaseHelper.getDeckNames();
@@ -207,6 +220,7 @@ public class MainActivity extends AppCompatActivity{
         btnEditDecks = findViewById(R.id.btnEditDecks);
         spSelectDeck = findViewById(R.id.spDecks);
         btnInfo = findViewById(R.id.btnInfo);
+        btnAnswered = findViewById(R.id.btnAnswered);
     }
 
     @Override

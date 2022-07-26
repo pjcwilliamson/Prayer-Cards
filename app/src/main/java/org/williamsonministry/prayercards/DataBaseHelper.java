@@ -775,7 +775,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
                     for (int j = 0; j < colCount; j++) {
                         String uneditedString = c.getString(j);
-                        String newString = Utils.replaceCommasAndNewLines(uneditedString);
+                        String newString = Utils.addInitialAsterisk(Utils.replaceCommasAndNewLines(uneditedString));
                         if (j != colCount - 1)
                             bw.write(newString + ",");
                         else
@@ -815,27 +815,26 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         ArrayList<PrayerCard> importedCards = new ArrayList<>();
 
-        // TODO: 7/25/2022 Fix imports to be less sensitive for the date, but also for names not starting in equals to replace another symbol 
-
         try {
             for (String[] row : rows) {
-                int id = Integer.parseInt(row[0]);
-                int listOrder = Integer.parseInt(row[1]);
-                String prayerText = Utils.putCommasAndNewLinesBackIn(row[2]);
-                String tags = Utils.putCommasAndNewLinesBackIn(row[3]);
-                int maxFreq = Integer.parseInt(row[4]);
-                int multiMaxFreq = Integer.parseInt(row[5]);
-                boolean inRotation = Integer.parseInt(row[6]) == 1;
-                Date lastSeen = new Date(Long.parseLong(row[7]));
-                int viewsRemaining = Integer.parseInt(row[8]);
-                Date expiryDate = new Date(Long.parseLong(row[9]));
-                boolean isActive = Integer.parseInt(row[10]) == 1;
-                boolean isAnswered = Integer.parseInt(row[11]) == 1;
+                int id = Integer.parseInt(Utils.removeInitialAsterisk(row[0]));
+                int listOrder = Integer.parseInt(Utils.removeInitialAsterisk(row[1]));
+                String prayerText = Utils.putCommasAndNewLinesBackIn(Utils.removeInitialAsterisk(row[2]));
+                String tags = Utils.putCommasAndNewLinesBackIn(Utils.removeInitialAsterisk(row[3]));
+                int maxFreq = Integer.parseInt(Utils.removeInitialAsterisk(row[4]));
+                int multiMaxFreq = Integer.parseInt(Utils.removeInitialAsterisk(row[5]));
+                boolean inRotation = Integer.parseInt(Utils.removeInitialAsterisk(row[6])) == 1;
+                Date lastSeen = new Date(Long.parseLong(Utils.removeInitialAsterisk(row[7])));
+                int viewsRemaining = Integer.parseInt(Utils.removeInitialAsterisk(row[8]));
+                Date expiryDate = new Date(Long.parseLong(Utils.removeInitialAsterisk(row[9])));
+                boolean isActive = Integer.parseInt(Utils.removeInitialAsterisk(row[10])) == 1;
+                boolean isAnswered = Integer.parseInt(Utils.removeInitialAsterisk(row[11])) == 1;
 
                 PrayerCard prayerCard = new PrayerCard(id, listOrder, prayerText, tags, maxFreq, multiMaxFreq, inRotation, lastSeen, viewsRemaining, expiryDate, isActive, isAnswered);
                 importedCards.add(prayerCard);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return "CSV file incorrectly formatted.\n\nOnly import CSV files created through this app's export function.";
         }
 

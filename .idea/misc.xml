@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/drawable/border.xml" value="0.5405" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/drawable/border_answered.xml" value="0.5405" />
         <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/activity_add_card.xml" value="0.55" />
         <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/activity_deck_swipe.xml" value="0.55" />
         <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/activity_edit_cards.xml" value="0.55" />

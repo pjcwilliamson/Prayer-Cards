@@ -85,6 +85,8 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
             holder.btnDeleteForever.setVisibility(View.VISIBLE);
             holder.btnRestore.setVisibility(View.VISIBLE);
             holder.btnEdit.setVisibility(View.GONE);
+            holder.btnThisCardAnswered.setVisibility(View.GONE);
+            holder.btnThisCardNotAnswered.setVisibility(View.GONE);
             holder.parent.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorLightGrey));
         } else {
             holder.btnInActivate.setVisibility(View.VISIBLE);
@@ -92,7 +94,15 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
             holder.btnDeleteForever.setVisibility(View.GONE);
             holder.btnRestore.setVisibility(View.GONE);
             holder.btnEdit.setVisibility(View.VISIBLE);
-            holder.parent.setCardBackgroundColor(mContext.getResources().getColor(android.R.color.white));
+            if (currentPrayerCards.get(holder.getAdapterPosition()).isAnswered())   {
+                holder.parent.setCardBackgroundColor(mContext.getResources().getColor(R.color.answeredGreen));
+                holder.btnThisCardAnswered.setVisibility(View.GONE);
+                holder.btnThisCardNotAnswered.setVisibility(View.VISIBLE);
+            } else {
+                holder.parent.setCardBackgroundColor(mContext.getResources().getColor(android.R.color.white));
+                holder.btnThisCardAnswered.setVisibility(View.VISIBLE);
+                holder.btnThisCardNotAnswered.setVisibility(View.GONE);
+            }
         }
 
         holder.txtPrayerRequest.setText(currentPrayerCards.get(holder.getAdapterPosition()).getPrayerText());
@@ -102,6 +112,54 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
             public void onClick(View view) {
                 CardEditOrAddDialog editDialog = new CardEditOrAddDialog(CardEditOrAddDialog.EDIT, mContext, currentPrayerCards.get(holder.getAdapterPosition()), holder.getAdapterPosition());
                 editDialog.onClick(holder.btnEdit);
+            }
+        });
+
+        holder.btnThisCardAnswered.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int Id = currentPrayerCards.get(holder.getAdapterPosition()).getId();
+                for (PrayerCard p: currentPrayerCards)  {
+                    if (p.getId() == Id) {
+                        p.setAnswered(true);
+                    }
+                }
+                for (PrayerCard p: allPrayerCards)  {
+                    if (p.getId() == Id) {
+                        p.setAnswered(true);
+                    }
+                }
+                holder.parent.setCardBackgroundColor(mContext.getResources().getColor(android.R.color.white));
+                holder.btnThisCardAnswered.setVisibility(View.VISIBLE);
+                holder.btnThisCardNotAnswered.setVisibility(View.GONE);
+                Toast.makeText(mContext, "Prayer Card marked as answered", Toast.LENGTH_SHORT).show();
+                setCards(currentPrayerCards);
+                notifyDataSetChanged();
+                asyncSave();
+            }
+        });
+
+        holder.btnThisCardNotAnswered.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int Id = currentPrayerCards.get(holder.getAdapterPosition()).getId();
+                for (PrayerCard p: currentPrayerCards)  {
+                    if (p.getId() == Id) {
+                        p.setAnswered(false);
+                    }
+                }
+                for (PrayerCard p: allPrayerCards)  {
+                    if (p.getId() == Id) {
+                        p.setAnswered(false);
+                    }
+                }
+                holder.parent.setCardBackgroundColor(mContext.getResources().getColor(R.color.answeredGreen));
+                holder.btnThisCardAnswered.setVisibility(View.GONE);
+                holder.btnThisCardNotAnswered.setVisibility(View.VISIBLE);
+                Toast.makeText(mContext, "Prayer Card marked as not answered", Toast.LENGTH_SHORT).show();
+                setCards(currentPrayerCards);
+                notifyDataSetChanged();
+                asyncSave();
             }
         });
 
@@ -298,6 +356,8 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
         private final ImageView handleView;
         private final Button btnRestore;
         private final Button btnDeleteForever;
+        private final Button btnThisCardAnswered;
+        private final Button btnThisCardNotAnswered;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -308,6 +368,8 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
             handleView = itemView.findViewById(R.id.imgDragHandle);
             btnRestore = itemView.findViewById(R.id.btnRestore);
             btnDeleteForever = itemView.findViewById(R.id.btnDeleteForever);
+            btnThisCardAnswered = itemView.findViewById(R.id.btnThisPrayerAnswered);
+            btnThisCardNotAnswered = itemView.findViewById(R.id.btnThisPrayerNotAnswered);
         }
 
         @Override

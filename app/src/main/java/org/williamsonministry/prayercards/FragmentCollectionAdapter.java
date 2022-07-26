@@ -47,7 +47,7 @@ public class FragmentCollectionAdapter extends FragmentStatePagerAdapter {
 
         ArrayList<String> tagsArrayList = Utils.commaStringToArraylist(thisDeck.get(i).getTags());
         String stringTags = String.join("\n", tagsArrayList);
-        DisplayCardsFragment fragment = DisplayCardsFragment.newInstance(thisDeck.get(i).getPrayerText(), stringTags, thisDeck.get(i).getId(), i);
+        DisplayCardsFragment fragment = DisplayCardsFragment.newInstance(thisDeck.get(i).getPrayerText(), stringTags, thisDeck.get(i).getId(), i, thisDeck.get(i).isAnswered());
         return fragment;
     }
 
@@ -59,6 +59,7 @@ public class FragmentCollectionAdapter extends FragmentStatePagerAdapter {
     }
 
     private ArrayList<PrayerCard> selectDeck() {
+        // TODO: 7/26/2022 Add 'answered prayers' or not to this
         DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
         ArrayList<PrayerCard> fullPrayers = dataBaseHelper.getAll();
 
@@ -71,6 +72,11 @@ public class FragmentCollectionAdapter extends FragmentStatePagerAdapter {
                 dataBaseHelper.editOneReturnPrayerCard(fullPrayers.get(i).getId(),fullPrayers.get(i));
             }
         }
+        
+        /*
+        Add or remove answered or unanswered cards
+         */
+        // TODO: 7/26/2022 Filter the deck by answered or not (notice the difference between deck and cards! That was confusing me! 
 
         ArrayList<PrayerCard> rotation = dataBaseHelper.getRotation();
         ArrayList<PrayerCard> tagFilteredPrayers = filterByTags(fullPrayers);

@@ -48,6 +48,8 @@ public class DeckRecViewAdapter extends RecyclerView.Adapter<DeckRecViewAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
+        holder.btnAnswered.setVisibility(View.GONE);
+
         holder.txtPrayerRequest.setText(allDecks.get(holder.getAdapterPosition()).getPrayerPlanName());
 
         holder.btnInActivate.setOnClickListener(new View.OnClickListener() {
@@ -151,6 +153,7 @@ public class DeckRecViewAdapter extends RecyclerView.Adapter<DeckRecViewAdapter.
         private final ImageView handleView;
         private final Button btnRestore;
         private final Button btnDeleteForever;
+        private final Button btnAnswered;
         private final ConstraintLayout layoutDataCard;
 
         public ViewHolder(@NonNull View itemView) {
@@ -163,7 +166,7 @@ public class DeckRecViewAdapter extends RecyclerView.Adapter<DeckRecViewAdapter.
             handleView = itemView.findViewById(R.id.imgDragHandle);
             btnRestore = itemView.findViewById(R.id.btnRestore);
             btnDeleteForever = itemView.findViewById(R.id.btnDeleteForever);
-
+            btnAnswered = itemView.findViewById(R.id.btnThisPrayerAnswered);
         }
 
         @Override

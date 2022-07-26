@@ -15,7 +15,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/card">
 
         <TextView
             android:layout_width="0dp"
@@ -113,6 +114,18 @@
             app:layout_constraintStart_toEndOf="@id/btnDeleteThisCard"
             app:layout_constraintEnd_toStartOf="@id/btnEditThisCard"
             android:layout_margin="24dp"/>
+
+        <ImageButton
+            android:id="@+id/btnThisPrayerNotAnswered"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/ripple_circle"
+            android:src="@drawable/ic_close_x"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btnDeleteThisCard"
+            app:layout_constraintEnd_toStartOf="@id/btnEditThisCard"
+            android:layout_margin="24dp"
+            android:visibility="gone"/>
 
         <ImageButton
             android:id="@+id/btnDeleteThisCard"
