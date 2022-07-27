@@ -66,21 +66,39 @@ public class FragmentCollectionAdapter extends FragmentStatePagerAdapter {
         /*
         Inactivate any cards past their expiry, and save that to the db
         */
-        for (int i = 0; i < fullPrayers.size(); i++)    {
-            if (fullPrayers.get(i).getExpiryDate().getTime() < Calendar.getInstance().getTimeInMillis() && fullPrayers.get(i).getExpiryDate().getTime() != UNUSED)    {
+        for (int i = 0; i < fullPrayers.size(); i++) {
+            if (fullPrayers.get(i).getExpiryDate().getTime() < Calendar.getInstance().getTimeInMillis() && fullPrayers.get(i).getExpiryDate().getTime() != UNUSED) {
                 fullPrayers.get(i).setActive(false);
-                dataBaseHelper.editOneReturnPrayerCard(fullPrayers.get(i).getId(),fullPrayers.get(i));
+                dataBaseHelper.editOneReturnPrayerCard(fullPrayers.get(i).getId(), fullPrayers.get(i));
             }
         }
-        
-        /*
-        Add or remove answered or unanswered cards
-         */
-        // TODO: 7/26/2022 Filter the deck by answered or not (notice the difference between deck and cards! That was confusing me! 
 
         ArrayList<PrayerCard> rotation = dataBaseHelper.getRotation();
         ArrayList<PrayerCard> tagFilteredPrayers = filterByTags(fullPrayers);
         ArrayList<PrayerCard> tagFilteredRotation = filterByTags(rotation);
+
+                /*
+        Add or remove answered or unanswered cards
+         */
+        for (int i = tagFilteredPrayers.size() - 1; i >= 0; i--) {
+            boolean removei = !activePrayerDeck.isIncludeAnswered() && tagFilteredPrayers.get(i).isAnswered();
+            if (!activePrayerDeck.isIncludeUnanswered() && !tagFilteredPrayers.get(i).isAnswered()) {
+                removei = true;
+            }
+            if (removei) {
+                tagFilteredPrayers.remove(i);
+            }
+        }
+        for (int i = tagFilteredRotation.size() - 1; i >= 0; i--) {
+            boolean removei = !activePrayerDeck.isIncludeAnswered() && tagFilteredRotation.get(i).isAnswered();
+            if (!activePrayerDeck.isIncludeUnanswered() && !tagFilteredRotation.get(i).isAnswered()) {
+                removei = true;
+            }
+            if (removei) {
+                tagFilteredRotation.remove(i);
+            }
+        }
+
 
         ArrayList<PrayerCard> prunedRotation = new ArrayList<PrayerCard>();
 
@@ -108,7 +126,7 @@ public class FragmentCollectionAdapter extends FragmentStatePagerAdapter {
 
         //eg. Calendar.getInstance().get(Calendar.MONTH);  <--- or something similar
 
-        for (int i = 0; i < tagFilteredPrayers.size(); i++)   {
+        for (int i = 0; i < tagFilteredPrayers.size(); i++) {
             long timeSinceLastSeen = timeNow - tagFilteredPrayers.get(i).getLastSeen().getTime();
 
 
@@ -116,7 +134,7 @@ public class FragmentCollectionAdapter extends FragmentStatePagerAdapter {
             calLastSeen.setTimeInMillis(tagFilteredPrayers.get(i).getLastSeen().getTime());
             int yearLastSeen = calLastSeen.get(Calendar.YEAR);
             int dayOfMonthLastSeenMax28 = calLastSeen.get(Calendar.DATE);
-            if (dayOfMonthLastSeenMax28 > 28)   {
+            if (dayOfMonthLastSeenMax28 > 28) {
                 dayOfMonthLastSeenMax28 = 28;
             }
             int monthLastSeen = calLastSeen.get(Calendar.MONTH);
@@ -126,17 +144,17 @@ public class FragmentCollectionAdapter extends FragmentStatePagerAdapter {
             if (todaysYear == yearLastSeen) {
                 daysSinceLastSeen = todaysDayOfYear - dayOfYearLastSeen;
                 monthsSinceLastSeen = todaysMonth - monthLastSeen;
-            }   else    {
+            } else {
                 int yearsDiff = todaysYear - yearLastSeen;
-                int extraDays = 365*(yearsDiff - 1);
-                int extraMonths = 12*(yearsDiff - 1);
-                daysSinceLastSeen = extraDays + todaysDayOfYear + (365-dayOfYearLastSeen);
-                monthsSinceLastSeen = extraMonths + todaysMonth + (12-monthLastSeen);
+                int extraDays = 365 * (yearsDiff - 1);
+                int extraMonths = 12 * (yearsDiff - 1);
+                daysSinceLastSeen = extraDays + todaysDayOfYear + (365 - dayOfYearLastSeen);
+                monthsSinceLastSeen = extraMonths + todaysMonth + (12 - monthLastSeen);
             }
 
-            if (!tagFilteredPrayers.get(i).isActive())  {
+            if (!tagFilteredPrayers.get(i).isActive()) {
                 //Do not add if not active
-            }   else if (tagFilteredPrayers.get(i).getMaxFrequency() == ALWAYS){
+            } else if (tagFilteredPrayers.get(i).getMaxFrequency() == ALWAYS) {
                 currentDeck.add(tagFilteredPrayers.get(i));
                 //dataBaseHelper.cardViewed(fullPrayers.get(i));
             }
@@ -154,16 +172,16 @@ public class FragmentCollectionAdapter extends FragmentStatePagerAdapter {
                     currentDeck.add(tagFilteredPrayers.get(i));
                     //dataBaseHelper.cardViewed(fullPrayers.get(i));
                 }
-            }   else if (tagFilteredPrayers.get(i).getMaxFrequency() == WEEKLY) {
-                if (daysSinceLastSeen >= tagFilteredPrayers.get(i).getMultipleMaxFreq()*7) {
+            } else if (tagFilteredPrayers.get(i).getMaxFrequency() == WEEKLY) {
+                if (daysSinceLastSeen >= tagFilteredPrayers.get(i).getMultipleMaxFreq() * 7) {
                     currentDeck.add(tagFilteredPrayers.get(i));
                     //dataBaseHelper.cardViewed(fullPrayers.get(i));
                 }
-            }   else if (tagFilteredPrayers.get(i).getMaxFrequency() == MONTHLY) {
+            } else if (tagFilteredPrayers.get(i).getMaxFrequency() == MONTHLY) {
                 if (monthsSinceLastSeen > tagFilteredPrayers.get(i).getMultipleMaxFreq()) {
                     currentDeck.add(tagFilteredPrayers.get(i));
                     //dataBaseHelper.cardViewed(fullPrayers.get(i));
-                }   else if (monthsSinceLastSeen == tagFilteredPrayers.get(i).getMultipleMaxFreq() && todaysDayOfMonth >= dayOfMonthLastSeenMax28)    {
+                } else if (monthsSinceLastSeen == tagFilteredPrayers.get(i).getMultipleMaxFreq() && todaysDayOfMonth >= dayOfMonthLastSeenMax28) {
                     currentDeck.add(tagFilteredPrayers.get(i));
                     //dataBaseHelper.cardViewed(fullPrayers.get(i));
                 }
@@ -187,11 +205,11 @@ public class FragmentCollectionAdapter extends FragmentStatePagerAdapter {
                 break;
         }
 
-        if (currentDeck.size() != 0)    {
+        if (currentDeck.size() != 0) {
             dataBaseHelper.cardViewed(currentDeck.get(0).getId());
         }
 
-        PrayerCard addCard = new PrayerCard(-100,-1,"", "",ALWAYS,-1,false,new Date(0),1,new Date(0),true);
+        PrayerCard addCard = new PrayerCard(-100, -1, "", "", ALWAYS, -1, false, new Date(0), 1, new Date(0), true);
         currentDeck.add(addCard);
 
         return currentDeck;
@@ -202,28 +220,30 @@ public class FragmentCollectionAdapter extends FragmentStatePagerAdapter {
     */
     private ArrayList<PrayerCard> filterByTags(ArrayList<PrayerCard> fullPrayers) {
         ArrayList<PrayerCard> tagFilteredPrayers = new ArrayList<PrayerCard>();
-        if (!activePrayerDeck.getTags().equals("")){
+        if (!activePrayerDeck.getTags().equals("")) {
             ArrayList<String> arrayListDeckTags = Utils.commaStringToArraylist(activePrayerDeck.getTags().toLowerCase());
-            if (activePrayerDeck.isMustHaveAllTags())   {
-                for (int i=0; i < fullPrayers.size(); i++)  {
+            if (activePrayerDeck.isMustHaveAllTags()) {
+                for (int i = 0; i < fullPrayers.size(); i++) {
                     ArrayList<String> arrayListCardTags = Utils.commaStringToArraylist(fullPrayers.get(i).getTags().toLowerCase());
-                    if (arrayListCardTags.containsAll(arrayListDeckTags))   {
+                    if (arrayListCardTags.containsAll(arrayListDeckTags)) {
                         tagFilteredPrayers.add(fullPrayers.get(i));
                     }
                 }
-            } else  {
-                for (int i=0; i < fullPrayers.size(); i++)  {
+            } else {
+                for (int i = 0; i < fullPrayers.size(); i++) {
                     ArrayList<String> arrayListCardTags = Utils.commaStringToArraylist(fullPrayers.get(i).getTags().toLowerCase());
                     ArrayList<Integer> listofIDs = new ArrayList<Integer>();
-                    for (String s: arrayListDeckTags)   {
-                        if (arrayListCardTags.contains(s) && !listofIDs.contains(fullPrayers.get(i).getId()))  {
+                    for (String s : arrayListDeckTags) {
+                        if (arrayListCardTags.contains(s) && !listofIDs.contains(fullPrayers.get(i).getId())) {
                             listofIDs.add(fullPrayers.get(i).getId());
                             tagFilteredPrayers.add(fullPrayers.get(i));
                         }
                     }
                 }
             }
-        }   else    {tagFilteredPrayers = fullPrayers;}
+        } else {
+            tagFilteredPrayers = fullPrayers;
+        }
         return tagFilteredPrayers;
     }
 

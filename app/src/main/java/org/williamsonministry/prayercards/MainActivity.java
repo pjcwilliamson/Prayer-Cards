@@ -41,17 +41,20 @@ public class MainActivity extends AppCompatActivity{
         
         initViews();
 
+        String infoText = "This is an app to help you keep track of things you want to be praying for.\n\n" +
+                "With this app you can create digital prayer cards. Some things you may want to pray for every time you pray, other things" +
+                " you may want to be praying for more occasionally. Sometimes you may want to pray for something a few times " +
+                "over a few weeks, such as when someone gives you a prayer request. You can also mark prayers as 'answered'." +
+                " This app can accommodate however you want to be praying!\n\n" +
+                "Start making prayer cards by pressing 'Add New Card' and pray through your cards by pressing 'Pray Now'.\n\n" +
+                "Made in 2021 by Pete Williamson.\n\nPlease ask any questions or report any bugs at williamsonapps@outlook.com";
+
         SharedPreferences sp3 = getSharedPreferences("FIRST_OPEN", MODE_PRIVATE);
         boolean hasBeenOpened = sp3.getBoolean("FIRST_OPEN", false);
         if (!hasBeenOpened) {
             AlertDialog aDHelp = new AlertDialog.Builder(MainActivity.this).create();
             aDHelp.setTitle("Info");
-            aDHelp.setMessage("This is an app to help you keep track of things you want to be praying for.\n\n" +
-                    "With this app you can create digital prayer cards. Some things you may want to pray for every time you pray, other things" +
-                    " you may want to be praying for more occasionally. Sometimes you may want to pray for something a few times " +
-                    "over a few weeks, such as when someone gives you a prayer request. This app can accommodate however you want to be praying!\n\n" +
-                    "Start making prayer cards by pressing 'Add New Card' and pray through your cards by pressing 'Pray Now'.\n\n" +
-                    "Made in 2021 by Pete Williamson.\n\nPlease ask any questions or report any bugs at williamsonapps@outlook.com");
+            aDHelp.setMessage(infoText);
             aDHelp.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -74,12 +77,7 @@ public class MainActivity extends AppCompatActivity{
             public void onClick(View view) {
                 AlertDialog aDHelp = new AlertDialog.Builder(MainActivity.this).create();
                 aDHelp.setTitle("Info");
-                aDHelp.setMessage("This is an app to help you keep track of things you want to be praying for.\n\n" +
-                        "With this app you can create digital prayer cards. Some things you may want to pray for every time you pray, other things" +
-                        " you may want to be praying for more occasionally. Sometimes you may want to pray for something a few times " +
-                        "over a few weeks, such as when someone gives you a prayer request. This app can accommodate however you want to be praying!\n\n" +
-                        "Start making prayer cards by pressing 'Add New Card' and pray through your cards by pressing 'Pray Now'.\n\n" +
-                        "Made in 2021 by Pete Williamson.\n\nPlease ask any questions or report any bugs at williamsonapps@outlook.com");
+                aDHelp.setMessage(infoText);
                 aDHelp.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

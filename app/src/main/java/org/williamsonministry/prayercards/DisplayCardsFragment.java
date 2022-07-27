@@ -3,6 +3,7 @@ package org.williamsonministry.prayercards;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -111,14 +112,19 @@ public class DisplayCardsFragment extends Fragment {
         final Context mContext = getContext();
         final DataBaseHelper dataBaseHelper = new DataBaseHelper(getActivity());
 
+        int defaultTextColor = prayerTextView.getCurrentTextColor();
+
         if (mId == -100) {
             btnEditThisCard.setVisibility(View.GONE);
             btnDeleteThisCard.setVisibility(View.GONE);
             layoutAddNew.setVisibility(View.VISIBLE);
+            btnThisPrayerAnswered.setVisibility(View.GONE);
         }
 
         if (isAnswered) {
             card.setBackground(mContext.getResources().getDrawable(R.drawable.border_answered));
+            tagsTextView.setTextColor(Color.BLACK);
+            prayerTextView.setTextColor(Color.BLACK);
             btnThisPrayerAnswered.setVisibility(View.GONE);
             btnThisPrayerNotAnswered.setVisibility(View.VISIBLE);
         }
@@ -189,6 +195,32 @@ public class DisplayCardsFragment extends Fragment {
                     }
                 });
                 alertDialog.show();
+            }
+        });
+
+        btnThisPrayerAnswered.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                card.setBackground(mContext.getResources().getDrawable(R.drawable.border_answered));
+                tagsTextView.setTextColor(Color.BLACK);
+                prayerTextView.setTextColor(Color.BLACK);
+                btnThisPrayerAnswered.setVisibility(View.GONE);
+                btnThisPrayerNotAnswered.setVisibility(View.VISIBLE);
+                dataBaseHelper.changeAnswered(mId, true);
+                Toast.makeText(mContext, "Prayer Card set as answered", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        btnThisPrayerNotAnswered.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                card.setBackground(mContext.getResources().getDrawable(R.drawable.border));
+                tagsTextView.setTextColor(mContext.getResources().getColor(R.color.colorLightGrey));
+                prayerTextView.setTextColor(defaultTextColor);
+                btnThisPrayerNotAnswered.setVisibility(View.GONE);
+                btnThisPrayerAnswered.setVisibility(View.VISIBLE);
+                dataBaseHelper.changeAnswered(mId, false);
+                Toast.makeText(mContext, "Prayer Card set as not answered", Toast.LENGTH_SHORT).show();
             }
         });
 

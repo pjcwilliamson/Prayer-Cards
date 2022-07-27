@@ -95,7 +95,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         ContentValues cv1 = new ContentValues();
 
         cv1.put(COLUMN_LIST_ORDER, -1);
-        cv1.put(COLUMN_DECK_NAME, "Answered Prayers");
+        cv1.put(COLUMN_DECK_NAME, "Answered Prayers Only");
         cv1.put(COLUMN_TAGS, "");
         cv1.put(COLUMN_ALL_TAGS, false);
         cv1.put(COLUMN_MAX_IN_ROTATION, 3);
@@ -165,7 +165,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             ContentValues cv1 = new ContentValues();
 
             cv1.put(COLUMN_LIST_ORDER, -1);
-            cv1.put(COLUMN_DECK_NAME, "Answered Prayers");
+            cv1.put(COLUMN_DECK_NAME, "Answered Prayers Only");
             cv1.put(COLUMN_TAGS, "");
             cv1.put(COLUMN_ALL_TAGS, false);
             cv1.put(COLUMN_MAX_IN_ROTATION, 3);
@@ -435,6 +435,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void changeAnswered(int id, boolean isAnswered) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(COLUMN_ANSWERED, isAnswered);
+
+        db.update(PRAYER_CARD_TABLE, cv, COLUMN_ID + " = " + id, null);
+        db.close();
+    }
+
     public void makeOneActive(int id, boolean resetViews, boolean resetExpiry) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -672,7 +682,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         ContentValues cv1 = new ContentValues();
 
         cv1.put(COLUMN_LIST_ORDER, -1);
-        cv1.put(COLUMN_DECK_NAME, "Answered Prayers");
+        cv1.put(COLUMN_DECK_NAME, "Answered Prayers Only");
         cv1.put(COLUMN_TAGS, "");
         cv1.put(COLUMN_ALL_TAGS, false);
         cv1.put(COLUMN_MAX_IN_ROTATION, 3);

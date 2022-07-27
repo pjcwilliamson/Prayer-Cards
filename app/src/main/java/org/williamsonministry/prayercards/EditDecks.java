@@ -41,7 +41,7 @@ public class EditDecks extends AppCompatActivity implements OnStartDragListener 
             public void onClick(View view) {
                 final AlertDialog alertDialog = new AlertDialog.Builder(EditDecks.this).create();
                 alertDialog.setTitle("Confirm");
-                alertDialog.setMessage("Are you sure you want to delete all custom Prayer Plans and reset to the default Prayer Plan?");
+                alertDialog.setMessage("Are you sure you want to delete all custom Prayer Plans and reset to the default Prayer Plans?");
                 alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
