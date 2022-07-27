@@ -67,8 +67,6 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
         }
         DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
 
-        // TODO: 7/21/2022 Check whether exports and imports still work with answered prayers. Looks like importing needs some work in dbhelper
-
         switch (requestCode) {
             case EXPORT_FILE_CSV:
                 if (resultCode == Activity.RESULT_OK) {

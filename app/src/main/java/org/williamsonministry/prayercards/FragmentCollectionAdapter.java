@@ -59,7 +59,6 @@ public class FragmentCollectionAdapter extends FragmentStatePagerAdapter {
     }
 
     private ArrayList<PrayerCard> selectDeck() {
-        // TODO: 7/26/2022 Add 'answered prayers' or not to this
         DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
         ArrayList<PrayerCard> fullPrayers = dataBaseHelper.getAll();
 

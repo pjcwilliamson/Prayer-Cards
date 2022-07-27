@@ -194,7 +194,6 @@ public class DeckEditOrAddDialog implements View.OnClickListener {
                     finalMaxRot = Integer.parseInt(etRotNumber.getText().toString());
                 }
 
-                // TODO: 7/25/2022 Add IncludesAnswered/Unanswered when button set up
                 PrayerDeck newPrayerDeck = new PrayerDeck(
                         -1,
                         -1,
