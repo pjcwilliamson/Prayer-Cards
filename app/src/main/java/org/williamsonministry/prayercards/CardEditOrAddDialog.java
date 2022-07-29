@@ -71,6 +71,7 @@ public class CardEditOrAddDialog implements View.OnClickListener {
             this.prayerCard = prayerCard;
         }
         this.position = position;
+        expiryDate = new Date(UNUSED);
     }
 
     @Override
@@ -255,6 +256,15 @@ public class CardEditOrAddDialog implements View.OnClickListener {
                     };
                     datePickerDialog = new DatePickerDialog(mContext, android.app.AlertDialog.THEME_HOLO_LIGHT, dateSetListener, year, month, day);
                     datePickerDialog.getDatePicker().setMinDate(cal.getTimeInMillis());
+                    datePickerDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialogInterface) {
+                            cbExpiryDate.setTextColor(mContext.getResources().getColor(R.color.colorLightGrey));
+                            txtExpiryDate.setVisibility(View.GONE);
+                            expiryDate = new Date(UNUSED);
+                            cbExpiryDate.setChecked(false);
+                        }
+                    });
                     datePickerDialog.show();
                 } else {
                     cbExpiryDate.setTextColor(mContext.getResources().getColor(R.color.colorLightGrey));

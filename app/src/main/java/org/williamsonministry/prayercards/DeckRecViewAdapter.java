@@ -88,11 +88,11 @@ public class DeckRecViewAdapter extends RecyclerView.Adapter<DeckRecViewAdapter.
             }}
         });
 
-        holder.btnEdit.setOnClickListener(new View.OnClickListener() {
+        holder.txtPrayerRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DeckEditOrAddDialog editDialog = new DeckEditOrAddDialog(DeckEditOrAddDialog.EDIT ,mContext, allDecks.get(holder.getAdapterPosition()), holder.getAdapterPosition());
-                editDialog.onClick(holder.btnEdit);
+                editDialog.onClick(holder.txtPrayerRequest);
             }
         });
 
@@ -147,7 +147,6 @@ public class DeckRecViewAdapter extends RecyclerView.Adapter<DeckRecViewAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
         private final TextView txtPrayerRequest;
-        private final Button btnEdit;
         private final Button btnInActivate;
         private final CardView parent;
         private final ImageView handleView;
@@ -161,7 +160,6 @@ public class DeckRecViewAdapter extends RecyclerView.Adapter<DeckRecViewAdapter.
             layoutDataCard = itemView.findViewById(R.id.layoutDataCard);
             parent = itemView.findViewById(R.id.cardViewParent);
             txtPrayerRequest = itemView.findViewById(R.id.txtPrayerRequest);
-            btnEdit = itemView.findViewById(R.id.btnEditCard);
             btnInActivate = itemView.findViewById(R.id.btnInactivateCard);
             handleView = itemView.findViewById(R.id.imgDragHandle);
             btnRestore = itemView.findViewById(R.id.btnRestore);

@@ -84,7 +84,6 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
             holder.handleView.setVisibility(View.GONE);
             holder.btnDeleteForever.setVisibility(View.VISIBLE);
             holder.btnRestore.setVisibility(View.VISIBLE);
-            holder.btnEdit.setVisibility(View.GONE);
             holder.btnThisCardAnswered.setVisibility(View.GONE);
             holder.btnThisCardNotAnswered.setVisibility(View.GONE);
             holder.parent.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorLightGrey));
@@ -93,7 +92,6 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
             holder.handleView.setVisibility(View.VISIBLE);
             holder.btnDeleteForever.setVisibility(View.GONE);
             holder.btnRestore.setVisibility(View.GONE);
-            holder.btnEdit.setVisibility(View.VISIBLE);
             if (currentPrayerCards.get(holder.getAdapterPosition()).isAnswered())   {
                 holder.parent.setCardBackgroundColor(mContext.getResources().getColor(R.color.answeredGreen));
                 holder.btnThisCardAnswered.setVisibility(View.GONE);
@@ -107,11 +105,11 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
 
         holder.txtPrayerRequest.setText(currentPrayerCards.get(holder.getAdapterPosition()).getPrayerText());
 
-        holder.btnEdit.setOnClickListener(new View.OnClickListener() {
+        holder.txtPrayerRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 CardEditOrAddDialog editDialog = new CardEditOrAddDialog(CardEditOrAddDialog.EDIT, mContext, currentPrayerCards.get(holder.getAdapterPosition()), holder.getAdapterPosition());
-                editDialog.onClick(holder.btnEdit);
+                editDialog.onClick(holder.txtPrayerRequest);
             }
         });
 
@@ -350,7 +348,6 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
         private final TextView txtPrayerRequest;
-        private final Button btnEdit;
         private final Button btnInActivate;
         private final CardView parent;
         private final ImageView handleView;
@@ -363,7 +360,6 @@ public class CardRecViewAdapter extends RecyclerView.Adapter<CardRecViewAdapter.
             super(itemView);
             parent = itemView.findViewById(R.id.cardViewParent);
             txtPrayerRequest = itemView.findViewById(R.id.txtPrayerRequest);
-            btnEdit = itemView.findViewById(R.id.btnEditCard);
             btnInActivate = itemView.findViewById(R.id.btnInactivateCard);
             handleView = itemView.findViewById(R.id.imgDragHandle);
             btnRestore = itemView.findViewById(R.id.btnRestore);
