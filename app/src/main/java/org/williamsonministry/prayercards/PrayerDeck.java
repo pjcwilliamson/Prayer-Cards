@@ -12,6 +12,8 @@ public class PrayerDeck implements Parcelable {
     private int maxCardsInRotation;
     private int rotationPosition;
     private boolean isActive;
+    private boolean includeAnswered;
+    private boolean includeUnanswered;
 
     public static final int START = 0;
     public static final int END = 1;
@@ -27,6 +29,21 @@ public class PrayerDeck implements Parcelable {
         this.maxCardsInRotation = maxCardsInRotation;
         this.rotationPosition = rotationPosition;
         this.isActive = isActive;
+        includeAnswered = false;
+        includeUnanswered = true;
+    }
+
+    public PrayerDeck(int id, int listOrder, String prayerPlanName, String tags, boolean mustHaveAllTags, int maxCardsInRotation, int rotationPosition, boolean isActive, boolean includeAnswered, boolean includeUnanswered) {
+        this.id = id;
+        this.listOrder = listOrder;
+        this.prayerPlanName = prayerPlanName;
+        this.tags = tags;
+        this.mustHaveAllTags = mustHaveAllTags;
+        this.maxCardsInRotation = maxCardsInRotation;
+        this.rotationPosition = rotationPosition;
+        this.isActive = isActive;
+        this.includeAnswered = includeAnswered;
+        this.includeUnanswered = includeUnanswered;
     }
 
     protected PrayerDeck(Parcel in) {
@@ -38,6 +55,8 @@ public class PrayerDeck implements Parcelable {
         maxCardsInRotation = in.readInt();
         rotationPosition = in.readInt();
         isActive = in.readByte() != 0;
+        includeAnswered = in.readByte() != 0;
+        includeUnanswered = in.readByte() != 0;
     }
 
     @Override
@@ -50,6 +69,8 @@ public class PrayerDeck implements Parcelable {
         dest.writeInt(maxCardsInRotation);
         dest.writeInt(rotationPosition);
         dest.writeByte((byte) (isActive ? 1 : 0));
+        dest.writeByte((byte) (includeAnswered ? 1 : 0));
+        dest.writeByte((byte) (includeUnanswered ? 1 : 0));
     }
 
     @Override
@@ -131,5 +152,21 @@ public class PrayerDeck implements Parcelable {
 
     public void setRotationPosition(int rotationPosition) {
         this.rotationPosition = rotationPosition;
+    }
+
+    public boolean isIncludeAnswered() {
+        return includeAnswered;
+    }
+
+    public void setIncludeAnswered(boolean includeAnswered) {
+        this.includeAnswered = includeAnswered;
+    }
+
+    public boolean isIncludeUnanswered() {
+        return includeUnanswered;
+    }
+
+    public void setIncludeUnanswered(boolean includeUnanswered) {
+        this.includeUnanswered = includeUnanswered;
     }
 }

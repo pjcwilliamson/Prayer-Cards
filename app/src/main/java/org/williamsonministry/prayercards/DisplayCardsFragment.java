@@ -3,6 +3,7 @@ package org.williamsonministry.prayercards;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -33,15 +34,17 @@ public class DisplayCardsFragment extends Fragment {
     private static final String ARG_TAGS = "tags";
     private static final String ARG_ID = "id";
     private static final String ARG_POSITION = "position";
+    private static final String ARG_ANSWERED = "answered";
 
     // TOD0: Rename and change types of parameters <-- pregiven comment
     private String mPrayerRequest, mTags;
     private int mId, position;
+    private boolean isAnswered;
 
     private TextView prayerTextView, tagsTextView, txtSwipeInstr;
 
-    private ImageButton btnEditThisCard, btnDeleteThisCard, btnAddNewHere;
-    private ConstraintLayout layoutAddNew;
+    private ImageButton btnEditThisCard, btnDeleteThisCard, btnAddNewHere, btnThisPrayerAnswered, btnThisPrayerNotAnswered;
+    private ConstraintLayout layoutAddNew, card;
 
     public TextView getTxtSwipeInstr() {
         return txtSwipeInstr;
@@ -59,16 +62,18 @@ public class DisplayCardsFragment extends Fragment {
      * @param mTags Parameter 2.
      * @param mId Parameter 3
      * @param position Parameter 4
+     * @param isAnswered Parameter 5
      * @return A new instance of fragment DisplayCardsFragment.
      */
     // TOD0: Rename and change types and number of parameters
-    public static DisplayCardsFragment newInstance(String mPrayerRequest, String mTags, int mId, int position) {
+    public static DisplayCardsFragment newInstance(String mPrayerRequest, String mTags, int mId, int position, boolean isAnswered) {
         DisplayCardsFragment fragment = new DisplayCardsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PRAYER, mPrayerRequest);
         args.putString(ARG_TAGS, mTags);
         args.putInt(ARG_ID, mId);
         args.putInt(ARG_POSITION, position);
+        args.putBoolean(ARG_ANSWERED, isAnswered);
         fragment.setArguments(args);
         return fragment;
     }
@@ -81,6 +86,7 @@ public class DisplayCardsFragment extends Fragment {
             mTags = getArguments().getString(ARG_TAGS);
             mId = getArguments().getInt(ARG_ID);
             position = getArguments().getInt(ARG_POSITION);
+            isAnswered = getArguments().getBoolean(ARG_ANSWERED);
         }
     }
 
@@ -99,14 +105,28 @@ public class DisplayCardsFragment extends Fragment {
         txtSwipeInstr = v.findViewById(R.id.txtSwipeInstr);
         layoutAddNew = v.findViewById(R.id.layoutAddCard);
         btnAddNewHere = v.findViewById(R.id.btnAddHere);
+        btnThisPrayerAnswered = v.findViewById(R.id.btnThisPrayerAnswered);
+        btnThisPrayerNotAnswered = v.findViewById(R.id.btnThisPrayerNotAnswered);
+        card = v.findViewById(R.id.card);
 
         final Context mContext = getContext();
         final DataBaseHelper dataBaseHelper = new DataBaseHelper(getActivity());
+
+        int defaultTextColor = prayerTextView.getCurrentTextColor();
 
         if (mId == -100) {
             btnEditThisCard.setVisibility(View.GONE);
             btnDeleteThisCard.setVisibility(View.GONE);
             layoutAddNew.setVisibility(View.VISIBLE);
+            btnThisPrayerAnswered.setVisibility(View.GONE);
+        }
+
+        if (isAnswered) {
+            card.setBackground(mContext.getResources().getDrawable(R.drawable.border_answered));
+            tagsTextView.setTextColor(Color.BLACK);
+            prayerTextView.setTextColor(Color.BLACK);
+            btnThisPrayerAnswered.setVisibility(View.GONE);
+            btnThisPrayerNotAnswered.setVisibility(View.VISIBLE);
         }
 
         /*
@@ -175,6 +195,32 @@ public class DisplayCardsFragment extends Fragment {
                     }
                 });
                 alertDialog.show();
+            }
+        });
+
+        btnThisPrayerAnswered.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                card.setBackground(mContext.getResources().getDrawable(R.drawable.border_answered));
+                tagsTextView.setTextColor(Color.BLACK);
+                prayerTextView.setTextColor(Color.BLACK);
+                btnThisPrayerAnswered.setVisibility(View.GONE);
+                btnThisPrayerNotAnswered.setVisibility(View.VISIBLE);
+                dataBaseHelper.changeAnswered(mId, true);
+                Toast.makeText(mContext, "Prayer Card set as answered", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        btnThisPrayerNotAnswered.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                card.setBackground(mContext.getResources().getDrawable(R.drawable.border));
+                tagsTextView.setTextColor(mContext.getResources().getColor(R.color.colorLightGrey));
+                prayerTextView.setTextColor(defaultTextColor);
+                btnThisPrayerNotAnswered.setVisibility(View.GONE);
+                btnThisPrayerAnswered.setVisibility(View.VISIBLE);
+                dataBaseHelper.changeAnswered(mId, false);
+                Toast.makeText(mContext, "Prayer Card set as not answered", Toast.LENGTH_SHORT).show();
             }
         });
 

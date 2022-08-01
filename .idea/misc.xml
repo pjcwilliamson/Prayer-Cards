@@ -3,9 +3,28 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/drawable/border.xml" value="0.5405" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/drawable/border_answered.xml" value="0.5405" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/drawable/border_thin.xml" value="0.5405" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/drawable/button_background.xml" value="0.5405" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/drawable/button_circle.xml" value="0.5405" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/drawable/help_button_background.xml" value="0.5405" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/drawable/ripple_button_background.xml" value="0.5405" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/drawable/white_background.xml" value="0.5405" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/activity_add_card.xml" value="0.55" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/activity_deck_swipe.xml" value="0.55" />
         <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/activity_edit_cards.xml" value="0.55" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/activity_edit_decks.xml" value="0.55" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/activity_main.xml" value="0.55" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/deck_edit_layout_dialog.xml" value="0.55" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/edit_card_card.xml" value="0.55" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/edit_layout_dialog.xml" value="0.55" />
+        <entry key="..\:/Users/pjcwi/AndroidStudioProjects/Prayer-Cards/app/src/main/res/layout/fragment_display_cards.xml" value="0.55" />
       </map>
     </option>
+  </component>
+  <component name="ProjectPlainTextFileTypeManager">
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/white_background.xml" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />

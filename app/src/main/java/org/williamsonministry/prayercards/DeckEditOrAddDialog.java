@@ -31,7 +31,7 @@ public class DeckEditOrAddDialog implements View.OnClickListener {
     public static final int ADD = 0;
 
     private EditText etDeckName, etTags, etRotNumber;
-    private CheckBox cbAllRot, cbTags, cbAllTags;
+    private CheckBox cbAllRot, cbTags, cbAllTags, cbIncludeAnswered, cbIncludeAnsweredOnly;
     private RadioGroup rgRotationPosition;
     private Button btnConfirm, btnCloseDialog;
     private ImageButton btnHelp;
@@ -77,6 +77,14 @@ public class DeckEditOrAddDialog implements View.OnClickListener {
             }
             if (prayerDeck.isMustHaveAllTags()){
                 cbAllTags.setChecked(true);
+            }
+            if (prayerDeck.isIncludeAnswered()) {
+                cbIncludeAnswered.setChecked(true);
+                cbIncludeAnsweredOnly.setVisibility(View.VISIBLE);
+            }
+            if (!prayerDeck.isIncludeUnanswered())  {
+                cbIncludeAnsweredOnly.setVisibility(View.VISIBLE);
+                cbIncludeAnsweredOnly.setChecked(true);
             }
             switch (prayerDeck.getRotationPosition()) {
                 case PrayerDeck.START:
@@ -147,6 +155,18 @@ public class DeckEditOrAddDialog implements View.OnClickListener {
             }
         });
 
+        cbIncludeAnswered.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b)  {
+                    cbIncludeAnsweredOnly.setVisibility(View.VISIBLE);
+                }   else    {
+                    cbIncludeAnsweredOnly.setChecked(false);
+                    cbIncludeAnsweredOnly.setVisibility(View.GONE);
+                }
+            }
+        });
+
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -174,7 +194,17 @@ public class DeckEditOrAddDialog implements View.OnClickListener {
                     finalMaxRot = Integer.parseInt(etRotNumber.getText().toString());
                 }
 
-                PrayerDeck newPrayerDeck = new PrayerDeck(-1,-1,etDeckName.getText().toString(),etTags.getText().toString(),cbAllTags.isChecked(),finalMaxRot,finalRotPosition,true);
+                PrayerDeck newPrayerDeck = new PrayerDeck(
+                        -1,
+                        -1,
+                        etDeckName.getText().toString(),
+                        etTags.getText().toString(),
+                        cbAllTags.isChecked(),
+                        finalMaxRot,
+                        finalRotPosition,
+                        true,
+                        cbIncludeAnswered.isChecked(),
+                        !cbIncludeAnsweredOnly.isChecked());
 
                 /*
                 Check if the prayerdeck name is already in use
@@ -205,14 +235,6 @@ public class DeckEditOrAddDialog implements View.OnClickListener {
                             Toast.makeText(mContext, "Error", Toast.LENGTH_SHORT).show();
                         }
 
-//                    etDeckName.setText("");
-//                    etTags.setText("");
-//                    etRotNumber.setText("");
-//                    rgRotationPosition.check(R.id.rbEnd);
-//                    cbAllRot.setChecked(false);
-//                    cbTags.setChecked(false);
-//                    cbAllTags.setChecked(false);
-//                    layoutTags.setVisibility(View.GONE);
                         ((EditDecks) mContext).getAdapter().notifyDataSetChanged();
                         alertDialog.cancel();
                     }
@@ -244,5 +266,7 @@ public class DeckEditOrAddDialog implements View.OnClickListener {
         layoutTags = editDialogView.findViewById(R.id.layoutTags);
         txtDialogTitle = editDialogView.findViewById(R.id.txtDialogTitle);
         btnHelp = editDialogView.findViewById(R.id.btnFreqHelp);
+        cbIncludeAnswered = editDialogView.findViewById(R.id.cbAnsweredPrayers);
+        cbIncludeAnsweredOnly = editDialogView.findViewById(R.id.cbIncludeAnsweredOnly);
     }
 }

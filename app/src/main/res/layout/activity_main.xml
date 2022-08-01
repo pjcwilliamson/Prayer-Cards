@@ -102,7 +102,7 @@
         android:background="@drawable/ripple_button_circle"
         android:src="@drawable/ic_add"
         app:layout_constraintBottom_toTopOf="@id/txtNewCard"
-        app:layout_constraintEnd_toStartOf="@+id/btnEditCards"
+        app:layout_constraintEnd_toStartOf="@+id/btnAnswered"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -119,6 +119,29 @@
         tools:ignore="SmallSp" />
 
     <ImageButton
+        android:id="@+id/btnAnswered"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/ripple_button_circle"
+        android:src="@drawable/ic_tick"
+        app:layout_constraintBottom_toTopOf="@id/txtAnswered"
+        app:layout_constraintEnd_toStartOf="@+id/btnEditCards"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/btnNewCard" />
+
+    <TextView
+        android:id="@+id/txtAnswered"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="@string/view_answered_prayers"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/btnAnswered"
+        app:layout_constraintStart_toStartOf="@id/btnAnswered"
+        tools:ignore="SmallSp" />
+
+    <ImageButton
         android:id="@+id/btnEditCards"
         android:layout_width="60dp"
         android:layout_height="60dp"
@@ -127,7 +150,7 @@
         app:layout_constraintBottom_toTopOf="@id/txtEditCards"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btnNewCard" />
+        app:layout_constraintStart_toEndOf="@+id/btnAnswered" />
 
     <TextView
         android:id="@+id/txtEditCards"

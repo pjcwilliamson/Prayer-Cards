@@ -25,6 +25,20 @@ public class Utils {
         return newString;
     }
 
+    public static String addInitialAsterisk(String s) {
+        return "*" + s;
+    }
+
+    public static String removeInitialAsterisk(String s) throws NullPointerException {
+        String a = String.valueOf(s.charAt(0));
+        String b = "*";
+        if (a.equals(b)){
+            return s.substring(1);
+        } else {
+            throw new NullPointerException();
+        }
+    }
+
 //    OLD UTILS CLASS BEFORE DB
 //    private static Utils instance;
 //

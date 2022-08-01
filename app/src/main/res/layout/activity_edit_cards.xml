@@ -162,6 +162,28 @@
             app:layout_constraintEnd_toEndOf="parent"
             />
 
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/answered"
+            android:checked="true"
+            android:id="@+id/cbAnsweredPrayers"
+            app:layout_constraintTop_toBottomOf="@id/cbFilterAlways"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/cbUnansweredPrayers"
+            />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/unanswered"
+            android:checked="true"
+            android:id="@+id/cbUnansweredPrayers"
+            app:layout_constraintTop_toBottomOf="@id/cbFilterAlways"
+            app:layout_constraintStart_toEndOf="@id/cbAnsweredPrayers"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
         <EditText
             android:id="@+id/etFilterTags"
             android:layout_width="match_parent"
@@ -169,7 +191,7 @@
             android:ems="10"
             android:inputType="textCapWords"
             android:hint="@string/tags_desc"
-            app:layout_constraintTop_toBottomOf="@id/cbFilterRotation"
+            app:layout_constraintTop_toBottomOf="@id/cbAnsweredPrayers"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginStart="12dp"

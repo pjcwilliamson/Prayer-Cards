@@ -49,7 +49,7 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
     private CardRecViewAdapter adapter;
     private ItemTouchHelper mItemTouchHelper;
     private ImageButton btnOpenFilter, btnDeleteAll, btnAdd, btnExportImport;
-    private CheckBox cbFilterAlways, cbFilterRotation, cbFilterRegSched, cbAllTags;
+    private CheckBox cbFilterAlways, cbFilterRotation, cbFilterRegSched, cbAllTags, cbIncludeAnswered, cbIncludeUnanswered;
     private EditText etFilterTags, etNameSearch;
     private Button btnApplyFilter, btnResetFilter;
     private ConstraintLayout layoutFilter;
@@ -220,8 +220,17 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
 
         Intent intent = getIntent();
         if (intent.getStringExtra(EDIT_STARTUP) != null) {
-            if (intent.getStringExtra(EDIT_STARTUP).equals("add")) {
-                btnAdd.performClick();
+            switch (intent.getStringExtra(EDIT_STARTUP))    {
+                case "add":
+                    btnAdd.performClick();
+                    break;
+                case "answered":
+                    cbIncludeAnswered.setChecked(true);
+                    cbIncludeUnanswered.setChecked(false);
+                    btnApplyFilter.performClick();
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -266,6 +275,8 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
         cbFilterAlways.setChecked(true);
         cbFilterRotation.setChecked(true);
         cbFilterRegSched.setChecked(true);
+        cbIncludeAnswered.setChecked(true);
+        cbIncludeUnanswered.setChecked(true);
         etFilterTags.setText("");
         etNameSearch.setText("");
         cbAllTags.setChecked(false);
@@ -320,6 +331,31 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
             }
             remove.clear();
         }
+
+        if (!cbIncludeAnswered.isChecked()) {
+            for (int i = filteredDeck.size() - 1; i >= 0; i--) {
+                if (filteredDeck.get(i).isAnswered()) {
+                    remove.add(i);
+                }
+            }
+            for (int i : remove) {
+                filteredDeck.remove(i);
+            }
+            remove.clear();
+        }
+
+        if (!cbIncludeUnanswered.isChecked()) {
+            for (int i = filteredDeck.size() - 1; i >= 0; i--) {
+                if (!filteredDeck.get(i).isAnswered()) {
+                    remove.add(i);
+                }
+            }
+            for (int i : remove) {
+                filteredDeck.remove(i);
+            }
+            remove.clear();
+        }
+
         if (!cbFilterRotation.isChecked()) {
             for (int i = filteredDeck.size() - 1; i >= 0; i--) {
                 if (filteredDeck.get(i).isInRotation()) {
@@ -415,6 +451,8 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
         cbFilterRotation = findViewById(R.id.cbFilterRotation);
         cbFilterRegSched = findViewById(R.id.cbFilterRegSched);
         cbAllTags = findViewById(R.id.cbAllTags);
+        cbIncludeAnswered = findViewById(R.id.cbAnsweredPrayers);
+        cbIncludeUnanswered = findViewById(R.id.cbUnansweredPrayers);
         etFilterTags = findViewById(R.id.etFilterTags);
         etNameSearch = findViewById(R.id.etNameSearch);
         btnApplyFilter = findViewById(R.id.btnFilter);

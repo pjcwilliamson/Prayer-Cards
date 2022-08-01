@@ -7,4 +7,5 @@
     <color name="colorLightGrey">#888888</color>
     <color name="black">#000000</color>
     <color name="iconColor">#CBB6EA</color>
+    <color name="answeredGreen">#00CFBC</color>
 </resources>

@@ -58,4 +58,10 @@
     <string name="card_save_service_desc">A service to save all the prayer cards to a local database in the background</string>
     <string name="deck_save_service_desc">A service to save all the prayer decks to a local database in the background</string>
     <string name="export_import">Export/Import</string>
+    <string name="view_answered_prayers">View Answered Prayers</string>
+    <string name="include_answered_prayers">Include answered prayers</string>
+    <string name="do_not_include_unanswered_prayers">Do not include unanswered prayers</string>
+    <string name="answered">Answered</string>
+    <string name="unanswered">Unanswered</string>
+    <string name="include_answered_prayers_only">Include answered prayers only</string>
 </resources>

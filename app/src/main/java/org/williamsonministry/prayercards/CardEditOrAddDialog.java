@@ -1,5 +1,6 @@
 package org.williamsonministry.prayercards;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.InputType;
@@ -10,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioGroup;
@@ -18,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.jetbrains.annotations.Nullable;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -55,17 +58,20 @@ public class CardEditOrAddDialog implements View.OnClickListener {
     private ConstraintLayout layoutAdvanced;
     private TextView txtViews;
     private TextView txtDialogTitle;
+    private TextView txtExpiryDate;
     private Button btnCloseDialog;
     private CheckBox cbExpiryDate;
-    private Spinner spMonth;
-    private Spinner spDay;
-    private Spinner spYear;
+    private DatePickerDialog datePickerDialog;
+    private Date expiryDate;
 
     public CardEditOrAddDialog(int dialogType, Context mContext, @Nullable PrayerCard prayerCard, int position) {
         this.dialogType = dialogType;
         this.mContext = mContext;
-        if (prayerCard != null){this.prayerCard = prayerCard;}
+        if (prayerCard != null) {
+            this.prayerCard = prayerCard;
+        }
         this.position = position;
+        expiryDate = new Date(UNUSED);
     }
 
     @Override
@@ -74,7 +80,7 @@ public class CardEditOrAddDialog implements View.OnClickListener {
 
         initViews(editDialogView);
 
-        if (dialogType == ADD)  {
+        if (dialogType == ADD) {
             btnConfirm.setText("Add");
             txtViews.setText("views");
             txtDialogTitle.setText("Add Prayer Card");
@@ -114,7 +120,7 @@ public class CardEditOrAddDialog implements View.OnClickListener {
                 DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
                 int id = prayerCard.getId();
                 int viewsRemaining = dataBaseHelper.getCardById(id).getViewsRemaining();
-                if (viewsRemaining != -1)   {
+                if (viewsRemaining != -1) {
                     etViewsLimit.setText(String.valueOf(viewsRemaining));
                     cbLimitViews.setChecked(true);
                 }
@@ -123,42 +129,13 @@ public class CardEditOrAddDialog implements View.OnClickListener {
             //Set the expiry date of the prayer card to the dialog
             if (prayerCard.getExpiryDate().getTime() != UNUSED) {
                 cbExpiryDate.setChecked(true);
-
-                ArrayAdapter<String> dayDataAdapter;
-                String[] arrayDays31 = mContext.getResources().getStringArray(R.array.dates_31);
-                String[] arrayDays30 = mContext.getResources().getStringArray(R.array.dates_30);
-                String[] arrayDays29 = mContext.getResources().getStringArray(R.array.dates_29);
-                String[] arrayDays28 = mContext.getResources().getStringArray(R.array.dates_28);
-
                 Calendar tempCal = Calendar.getInstance();
                 tempCal.setTimeInMillis(prayerCard.getExpiryDate().getTime());
                 int day = tempCal.get(Calendar.DAY_OF_MONTH);
-                int monthInt = tempCal.get(Calendar.MONTH);
+                int month = tempCal.get(Calendar.MONTH);
                 int year = tempCal.get(Calendar.YEAR);
-                if (monthInt == 0 || monthInt == 2 || monthInt == 4 || monthInt == 6 || monthInt == 7 || monthInt == 9 || monthInt == 11) {
-                    dayDataAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_dropdown_item, arrayDays31);
-                    spDay.setAdapter(dayDataAdapter);
-                }
-                if (monthInt == 3 || monthInt == 5 || monthInt == 8 || monthInt == 10) {
-                    dayDataAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_dropdown_item, arrayDays30);
-                    spDay.setAdapter(dayDataAdapter);
-                }
-                if (monthInt == 1) {
-                    if (year == 2024 || year == 2028) {
-                        dayDataAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_dropdown_item, arrayDays29);
-                        spDay.setAdapter(dayDataAdapter);
-                    } else {
-                        dayDataAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_dropdown_item, arrayDays28);
-                        spDay.setAdapter(dayDataAdapter);
-                    }
-                }
-
-                spDay.setSelection(day - 1);
-                spMonth.setSelection(monthInt);
-                spYear.setSelection(year - 2021);
-                spDay.setVisibility(View.VISIBLE);
-                spMonth.setVisibility(View.VISIBLE);
-                spYear.setVisibility(View.VISIBLE);
+                txtExpiryDate.setText(makeDateString(day, month, year));
+                txtExpiryDate.setVisibility(View.VISIBLE);
             }
         }
 
@@ -188,7 +165,7 @@ public class CardEditOrAddDialog implements View.OnClickListener {
             public void onClick(View view) {
                 layoutAdvanced.setVisibility(View.GONE);
                 btnOpenAdvanced.setVisibility(View.VISIBLE);
-                if (dialogType == ADD)  {
+                if (dialogType == ADD) {
                     radioGroup.check(R.id.rbAlways);
                     etMultiMaxFreq.setText("");
                     etTags.setText("");
@@ -198,9 +175,7 @@ public class CardEditOrAddDialog implements View.OnClickListener {
                     layoutAdvanced.setVisibility(View.GONE);
                     btnOpenAdvanced.setVisibility(View.VISIBLE);
                     cbExpiryDate.setChecked(false);
-                    spMonth.setSelection(0);
-                    spDay.setSelection(0);
-                    spYear.setSelection(0);
+                    expiryDate = new Date(UNUSED);
                 }
             }
         });
@@ -228,12 +203,12 @@ public class CardEditOrAddDialog implements View.OnClickListener {
         cbLimitViews.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b){
+                if (b) {
                     cbLimitViews.setTextColor(mContext.getResources().getColor(R.color.black));
                     txtViews.setTextColor(mContext.getResources().getColor(R.color.black));
                     etViewsLimit.setInputType(InputType.TYPE_CLASS_NUMBER);
                     etViewsLimit.setEnabled(true);
-                } else  {
+                } else {
                     cbLimitViews.setTextColor(mContext.getResources().getColor(R.color.colorLightGrey));
                     txtViews.setTextColor(mContext.getResources().getColor(R.color.colorLightGrey));
                     etViewsLimit.setEnabled(false);
@@ -247,9 +222,9 @@ public class CardEditOrAddDialog implements View.OnClickListener {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                if (i==R.id.rbRegSched){
+                if (i == R.id.rbRegSched) {
                     layoutRegSched.setVisibility(View.VISIBLE);
-                } else  {
+                } else {
                     layoutRegSched.setVisibility(View.GONE);
                 }
             }
@@ -258,88 +233,44 @@ public class CardEditOrAddDialog implements View.OnClickListener {
         cbExpiryDate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b){
+                if (b) {
                     cbExpiryDate.setTextColor(mContext.getResources().getColor(R.color.black));
-                    spDay.setVisibility(View.VISIBLE);
-                    spMonth.setVisibility(View.VISIBLE);
-                    spYear.setVisibility(View.VISIBLE);
-
-                } else  {
+                    Calendar cal = Calendar.getInstance();
+                    int year = cal.get(Calendar.YEAR);
+                    int month = cal.get(Calendar.MONTH);
+                    int day = cal.get(Calendar.DAY_OF_MONTH);
+                    String date = makeDateString(day, month, year);
+                    expiryDate = cal.getTime();
+                    txtExpiryDate.setText(date);
+                    txtExpiryDate.setVisibility(View.VISIBLE);
+                    DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                            String date = makeDateString(day, month, year);
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.set(year, month, day, 23, 59, 59);
+                            expiryDate = calendar.getTime();
+                            txtExpiryDate.setText(date);
+                            txtExpiryDate.setVisibility(View.VISIBLE);
+                        }
+                    };
+                    datePickerDialog = new DatePickerDialog(mContext, android.app.AlertDialog.THEME_HOLO_LIGHT, dateSetListener, year, month, day);
+                    datePickerDialog.getDatePicker().setMinDate(cal.getTimeInMillis());
+                    datePickerDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialogInterface) {
+                            cbExpiryDate.setTextColor(mContext.getResources().getColor(R.color.colorLightGrey));
+                            txtExpiryDate.setVisibility(View.GONE);
+                            expiryDate = new Date(UNUSED);
+                            cbExpiryDate.setChecked(false);
+                        }
+                    });
+                    datePickerDialog.show();
+                } else {
                     cbExpiryDate.setTextColor(mContext.getResources().getColor(R.color.colorLightGrey));
-                    spDay.setVisibility(View.GONE);
-                    spMonth.setVisibility(View.GONE);
-                    spYear.setVisibility(View.GONE);
+                    txtExpiryDate.setVisibility(View.GONE);
+                    expiryDate = new Date(UNUSED);
                 }
-            }
-        });
-
-        //Set the number of available days on the days spinner based on the month (and year for Feb)
-        spMonth.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-
-            ArrayAdapter<String> dayDataAdapter;
-            final String[] arrayDays31 = mContext.getResources().getStringArray(R.array.dates_31);
-            final String[] arrayDays30 = mContext.getResources().getStringArray(R.array.dates_30);
-            final String[] arrayDays29 = mContext.getResources().getStringArray(R.array.dates_29);
-            final String[] arrayDays28 = mContext.getResources().getStringArray(R.array.dates_28);
-
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String month = String.valueOf(adapterView.getItemAtPosition(i));
-                int day = Integer.parseInt(spDay.getSelectedItem().toString());
-                if (month.equals("Jan") || month.equals("Mar") || month.equals("May") || month.equals("Jul") || month.equals("Aug") || month.equals("Oct") || month.equals("Dec")) {
-                    dayDataAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_dropdown_item, arrayDays31);
-                    spDay.setAdapter(dayDataAdapter);
-                    spDay.setSelection(day-1);
-                }
-                if (month.equals("Apr") || month.equals("Jun") || month.equals("Sep") || month.equals("Nov"))   {
-                    dayDataAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_dropdown_item, arrayDays30);
-                    spDay.setAdapter(dayDataAdapter);
-                    if (day < 31) {spDay.setSelection(day-1);} else {spDay.setSelection(29);}
-                }
-                if (month.equals("Feb"))    {
-                    if (String.valueOf(spYear.getSelectedItem()).equals("2024") || String.valueOf(spYear.getSelectedItem()).equals("2028"))   {
-                        dayDataAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_dropdown_item, arrayDays29);
-                        spDay.setAdapter(dayDataAdapter);
-                        if (day < 30) {spDay.setSelection(day-1);} else {spDay.setSelection(28);}
-                    }   else   {
-                        dayDataAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_dropdown_item, arrayDays28);
-                        spDay.setAdapter(dayDataAdapter);
-                        if (day < 29) {spDay.setSelection(day-1);} else {spDay.setSelection(27);}
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        }); //This might help: https://mkyong.com/android/android-spinner-drop-down-list-example/#:~:text=Attach%20a%20listener%20on%20Spinner,%20fire%20when%20user,Eclipse%203.7,%20and%20tested%20with%20Android%202.3.3.%201.
-
-        spYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-
-            ArrayAdapter<String> dayDataAdapter;
-            final String[] arrayDays29 = mContext.getResources().getStringArray(R.array.dates_29);
-            final String[] arrayDays28 = mContext.getResources().getStringArray(R.array.dates_28);
-
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String month = String.valueOf(spMonth.getSelectedItem());
-                String year = String.valueOf(adapterView.getItemAtPosition(i));
-                int day = Integer.parseInt(spDay.getSelectedItem().toString());
-                if (month.equals("Feb")) {
-                    if (year.equals("2024") || year.equals("2028")) {
-                        dayDataAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_dropdown_item, arrayDays29);
-                        spDay.setAdapter(dayDataAdapter);
-                        if (day < 30) {spDay.setSelection(day-1);} else {spDay.setSelection(28);}
-                    } else  {
-                        dayDataAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_dropdown_item, arrayDays28);
-                        spDay.setAdapter(dayDataAdapter);
-                        if (day < 29) {spDay.setSelection(day-1);} else {spDay.setSelection(27);}
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
 
@@ -350,12 +281,12 @@ public class CardEditOrAddDialog implements View.OnClickListener {
 
                 int maxFrequency = UNUSED;  //default is unused, so -1
 
-                if (radioGroup.getCheckedRadioButtonId() == R.id.rbAlways)   {
+                if (radioGroup.getCheckedRadioButtonId() == R.id.rbAlways) {
                     maxFrequency = ALWAYS;
-                }   else if (radioGroup.getCheckedRadioButtonId() == R.id.rbRotation) {
+                } else if (radioGroup.getCheckedRadioButtonId() == R.id.rbRotation) {
                     maxFrequency = UNUSED;
-                }   else    {
-                    switch (spMaxFreq.getSelectedItem().toString()){
+                } else {
+                    switch (spMaxFreq.getSelectedItem().toString()) {
                         case "days.":
                             maxFrequency = DAILY;
                             break;
@@ -374,23 +305,21 @@ public class CardEditOrAddDialog implements View.OnClickListener {
                 int multiMaxFreq;
                 try {       //make sure its an integer. Could be null?
                     multiMaxFreq = Integer.parseInt(etMultiMaxFreq.getText().toString());
-                } catch (Exception e)   {
+                } catch (Exception e) {
                     multiMaxFreq = -1;
                 }
 
                 int viewsRemaining = -1;
-                if (cbLimitViews.isChecked())   {
+                if (cbLimitViews.isChecked()) {
                     try {       //make sure its an integer. Could be null?
                         viewsRemaining = Integer.parseInt(etViewsLimit.getText().toString());
-                    } catch (Exception e)   {
+                    } catch (Exception e) {
                         viewsRemaining = -1;
                     }
                 }
 
-                Date expiryDate = dateFromSpinners(spMonth.getSelectedItem().toString(), Integer.parseInt(spDay.getSelectedItem().toString()), Integer.parseInt(spYear.getSelectedItem().toString()), cbExpiryDate.isChecked());
-
-                if (dialogType == EDIT){
-                    PrayerCard editedPrayerCard = new PrayerCard(prayerCard.getId(), prayerCard.getListOrder(), etPrayerReq.getText().toString(), etTags.getText().toString(), maxFrequency, multiMaxFreq, radioGroup.getCheckedRadioButtonId() == R.id.rbRotation, prayerCard.getLastSeen() , viewsRemaining, expiryDate,true);
+                if (dialogType == EDIT) {
+                    PrayerCard editedPrayerCard = new PrayerCard(prayerCard.getId(), prayerCard.getListOrder(), etPrayerReq.getText().toString(), etTags.getText().toString(), maxFrequency, multiMaxFreq, radioGroup.getCheckedRadioButtonId() == R.id.rbRotation, prayerCard.getLastSeen(), viewsRemaining, expiryDate, true, prayerCard.isAnswered());
                     ((EditCards) mContext).getAdapter().getCurrentPrayerCards().set(position, editedPrayerCard);
                     for (int i = 0; i < ((EditCards) mContext).getAdapter().getAllPrayerCards().size(); i++) {
                         if (((EditCards) mContext).getAdapter().getAllPrayerCards().get(i).getId() == prayerCard.getId()) {
@@ -404,32 +333,32 @@ public class CardEditOrAddDialog implements View.OnClickListener {
                     alertDialog.dismiss();
                 }
 
-                if (dialogType == FRAGMENTEDIT){
-                    PrayerCard editedPrayerCard = new PrayerCard(prayerCard.getId(), prayerCard.getListOrder(), etPrayerReq.getText().toString(), etTags.getText().toString(), maxFrequency, multiMaxFreq, radioGroup.getCheckedRadioButtonId() == R.id.rbRotation, prayerCard.getLastSeen() , viewsRemaining, expiryDate,true);
+                if (dialogType == FRAGMENTEDIT) {
+                    PrayerCard editedPrayerCard = new PrayerCard(prayerCard.getId(), prayerCard.getListOrder(), etPrayerReq.getText().toString(), etTags.getText().toString(), maxFrequency, multiMaxFreq, radioGroup.getCheckedRadioButtonId() == R.id.rbRotation, prayerCard.getLastSeen(), viewsRemaining, expiryDate, true, prayerCard.isAnswered());
 
                     DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
-                    dataBaseHelper.editOneReturnPrayerCard(prayerCard.getId(),editedPrayerCard);
+                    dataBaseHelper.editOneReturnPrayerCard(prayerCard.getId(), editedPrayerCard);
 
                     ((DeckSwipe) mContext).getAdapter().getThisDeck().set(position, editedPrayerCard);
                     ((DeckSwipe) mContext).getAdapter().notifyDataSetChanged();
                     alertDialog.dismiss();
                 }
 
-                if (dialogType == ADD)  {
+                if (dialogType == ADD) {
                     int size;
 
                     if (prayerCard != null) {
                         size = ((DeckSwipe) mContext).getAdapter().getThisDeck().size();
-                    }   else    {
+                    } else {
                         size = ((EditCards) mContext).getAdapter().getAllPrayerCards().size();
                     }
 
-                    PrayerCard newPrayerCard = new PrayerCard(-1, size, etPrayerReq.getText().toString(), etTags.getText().toString(), maxFrequency, multiMaxFreq, radioGroup.getCheckedRadioButtonId() == R.id.rbRotation, new Date(0) , viewsRemaining, expiryDate,true);
+                    PrayerCard newPrayerCard = new PrayerCard(-1, size, etPrayerReq.getText().toString(), etTags.getText().toString(), maxFrequency, multiMaxFreq, radioGroup.getCheckedRadioButtonId() == R.id.rbRotation, new Date(0), viewsRemaining, expiryDate, true);
                     long newID = db.addOne(newPrayerCard);
                     newPrayerCard.setId((int) newID);
-                    if (prayerCard != null)  {
-                        ((DeckSwipe) mContext).getAdapter().getThisDeck().set(size-1, newPrayerCard);
-                        PrayerCard addCard = new PrayerCard(-100,-1,"", "",ALWAYS,-1,false,new Date(0),1,new Date(0),true);
+                    if (prayerCard != null) {
+                        ((DeckSwipe) mContext).getAdapter().getThisDeck().set(size - 1, newPrayerCard);
+                        PrayerCard addCard = new PrayerCard(-100, -1, "", "", ALWAYS, -1, false, new Date(0), 1, new Date(0), true);
                         ((DeckSwipe) mContext).getAdapter().getThisDeck().add(addCard);
                         ((DeckSwipe) mContext).getAdapter().notifyDataSetChanged();
                         alertDialog.dismiss();
@@ -444,9 +373,9 @@ public class CardEditOrAddDialog implements View.OnClickListener {
                         ((EditCards) mContext).getAdapter().setCards(newCurrentCards);
                     }
 
-                    if (newID > -1)    {
+                    if (newID > -1) {
                         Toast.makeText(mContext, "Prayer Card added successfully", Toast.LENGTH_SHORT).show();
-                    }   else    {
+                    } else {
                         Toast.makeText(mContext, "Error", Toast.LENGTH_SHORT).show();
                     }
 
@@ -460,65 +389,49 @@ public class CardEditOrAddDialog implements View.OnClickListener {
         });
     }
 
-    private Date dateFromSpinners(String month, int day, int year, boolean hasExpiry) {
-
-        int monthInt = -1;
-
-        switch (month)  {
-            case "Jan":
-                monthInt = 0;
+    private String makeDateString(int day, int month, int year) {
+        String monthString = "Jan";
+        switch (month) {
+            case 0:
+                monthString = "Jan";
                 break;
-            case "Feb":
-                monthInt = 1;
+            case 1:
+                monthString = "Feb";
                 break;
-            case "Mar":
-                monthInt = 2;
+            case 2:
+                monthString = "Mar";
                 break;
-            case "Apr":
-                monthInt = 3;
+            case 3:
+                monthString = "Apr";
                 break;
-            case "May":
-                monthInt = 4;
+            case 4:
+                monthString = "May";
                 break;
-            case "Jun":
-                monthInt = 5;
+            case 5:
+                monthString = "Jun";
                 break;
-            case "Jul":
-                monthInt = 6;
+            case 6:
+                monthString = "Jul";
                 break;
-            case "Aug":
-                monthInt = 7;
+            case 7:
+                monthString = "Aug";
                 break;
-            case "Sep":
-                monthInt = 8;
+            case 8:
+                monthString = "Sep";
                 break;
-            case "Oct":
-                monthInt = 9;
+            case 9:
+                monthString = "Oct";
                 break;
-            case "Nov":
-                monthInt = 10;
+            case 10:
+                monthString = "Nov";
                 break;
-            case "Dec":
-                monthInt = 11;
+            case 11:
+                monthString = "Dec";
                 break;
             default:
                 break;
         }
-
-        Calendar calendar = Calendar.getInstance();
-
-        calendar.set(year, monthInt, day, 23, 59,59);
-
-        Date date;
-
-        if (hasExpiry)  {
-            date = calendar.getTime();
-        } else {
-            date = new Date(UNUSED);
-        }
-
-        return date;
-
+        return monthString + " " + day + ", " + year;
     }
 
     private void initViews(View editDialogView) {
@@ -537,12 +450,8 @@ public class CardEditOrAddDialog implements View.OnClickListener {
         layoutAdvanced = editDialogView.findViewById(R.id.layoutAdvanced);
         txtViews = editDialogView.findViewById(R.id.txtViews);
         txtDialogTitle = editDialogView.findViewById(R.id.txtDialogTitle);
+        txtExpiryDate = editDialogView.findViewById(R.id.txtExpiryDate);
         btnCloseDialog = editDialogView.findViewById(R.id.btnCloseDialog);
         cbExpiryDate = editDialogView.findViewById(R.id.cbExpiryDate);
-        spMonth = editDialogView.findViewById(R.id.spMonth);
-        spDay = editDialogView.findViewById(R.id.spDay);
-        spYear = editDialogView.findViewById(R.id.spYear);
     }
-
-
 }

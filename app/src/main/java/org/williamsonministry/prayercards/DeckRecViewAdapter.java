@@ -48,6 +48,8 @@ public class DeckRecViewAdapter extends RecyclerView.Adapter<DeckRecViewAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
+        holder.btnAnswered.setVisibility(View.GONE);
+
         holder.txtPrayerRequest.setText(allDecks.get(holder.getAdapterPosition()).getPrayerPlanName());
 
         holder.btnInActivate.setOnClickListener(new View.OnClickListener() {
@@ -86,11 +88,11 @@ public class DeckRecViewAdapter extends RecyclerView.Adapter<DeckRecViewAdapter.
             }}
         });
 
-        holder.btnEdit.setOnClickListener(new View.OnClickListener() {
+        holder.txtPrayerRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DeckEditOrAddDialog editDialog = new DeckEditOrAddDialog(DeckEditOrAddDialog.EDIT ,mContext, allDecks.get(holder.getAdapterPosition()), holder.getAdapterPosition());
-                editDialog.onClick(holder.btnEdit);
+                editDialog.onClick(holder.txtPrayerRequest);
             }
         });
 
@@ -145,12 +147,12 @@ public class DeckRecViewAdapter extends RecyclerView.Adapter<DeckRecViewAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
         private final TextView txtPrayerRequest;
-        private final Button btnEdit;
         private final Button btnInActivate;
         private final CardView parent;
         private final ImageView handleView;
         private final Button btnRestore;
         private final Button btnDeleteForever;
+        private final Button btnAnswered;
         private final ConstraintLayout layoutDataCard;
 
         public ViewHolder(@NonNull View itemView) {
@@ -158,12 +160,11 @@ public class DeckRecViewAdapter extends RecyclerView.Adapter<DeckRecViewAdapter.
             layoutDataCard = itemView.findViewById(R.id.layoutDataCard);
             parent = itemView.findViewById(R.id.cardViewParent);
             txtPrayerRequest = itemView.findViewById(R.id.txtPrayerRequest);
-            btnEdit = itemView.findViewById(R.id.btnEditCard);
             btnInActivate = itemView.findViewById(R.id.btnInactivateCard);
             handleView = itemView.findViewById(R.id.imgDragHandle);
             btnRestore = itemView.findViewById(R.id.btnRestore);
             btnDeleteForever = itemView.findViewById(R.id.btnDeleteForever);
-
+            btnAnswered = itemView.findViewById(R.id.btnThisPrayerAnswered);
         }
 
         @Override

@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity{
 //    Using this YouTube video to figure out ViewPager https://www.youtube.com/watch?v=7aLCWbe6Awk
 
     private Button btnPrayerStart;
-    private ImageButton btnEditCards, btnNewCard, btnEditDecks, btnInfo;
+    private ImageButton btnEditCards, btnNewCard, btnEditDecks, btnInfo, btnAnswered;
     private Spinner spSelectDeck;
     private ArrayAdapter<String> deckArrayAdapter;
     private boolean isSaveFinished;
@@ -41,17 +41,20 @@ public class MainActivity extends AppCompatActivity{
         
         initViews();
 
+        String infoText = "This is an app to help you keep track of things you want to be praying for.\n\n" +
+                "With this app you can create digital prayer cards. Some things you may want to pray for every time you pray, other things" +
+                " you may want to be praying for more occasionally. Sometimes you may want to pray for something a few times " +
+                "over a few weeks, such as when someone gives you a prayer request. You can also mark prayers as 'answered'." +
+                " This app can accommodate however you want to be praying!\n\n" +
+                "Start making prayer cards by pressing 'Add New Card' and pray through your cards by pressing 'Pray Now'.\n\n" +
+                "Made in 2021 by Pete Williamson.\n\nPlease ask any questions or report any bugs at williamsonapps@outlook.com";
+
         SharedPreferences sp3 = getSharedPreferences("FIRST_OPEN", MODE_PRIVATE);
         boolean hasBeenOpened = sp3.getBoolean("FIRST_OPEN", false);
         if (!hasBeenOpened) {
             AlertDialog aDHelp = new AlertDialog.Builder(MainActivity.this).create();
             aDHelp.setTitle("Info");
-            aDHelp.setMessage("This is an app to help you keep track of things you want to be praying for.\n\n" +
-                    "With this app you can create digital prayer cards. Some things you may want to pray for every time you pray, other things" +
-                    " you may want to be praying for more occasionally. Sometimes you may want to pray for something a few times " +
-                    "over a few weeks, such as when someone gives you a prayer request. This app can accommodate however you want to be praying!\n\n" +
-                    "Start making prayer cards by pressing 'Add New Card' and pray through your cards by pressing 'Pray Now'.\n\n" +
-                    "Made in 2021 by Pete Williamson.\n\nPlease ask any questions or report any bugs at williamsonapps@outlook.com");
+            aDHelp.setMessage(infoText);
             aDHelp.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -74,12 +77,7 @@ public class MainActivity extends AppCompatActivity{
             public void onClick(View view) {
                 AlertDialog aDHelp = new AlertDialog.Builder(MainActivity.this).create();
                 aDHelp.setTitle("Info");
-                aDHelp.setMessage("This is an app to help you keep track of things you want to be praying for.\n\n" +
-                        "With this app you can create digital prayer cards. Some things you may want to pray for every time you pray, other things" +
-                        " you may want to be praying for more occasionally. Sometimes you may want to pray for something a few times " +
-                        "over a few weeks, such as when someone gives you a prayer request. This app can accommodate however you want to be praying!\n\n" +
-                        "Start making prayer cards by pressing 'Add New Card' and pray through your cards by pressing 'Pray Now'.\n\n" +
-                        "Made in 2021 by Pete Williamson.\n\nPlease ask any questions or report any bugs at williamsonapps@outlook.com");
+                aDHelp.setMessage(infoText);
                 aDHelp.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -136,6 +134,19 @@ public class MainActivity extends AppCompatActivity{
                     Intent intent = new Intent(MainActivity.this, EditCards.class);
                     startActivity(intent);
                 } else  {
+                    Toast.makeText(MainActivity.this, "Failed to open", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        btnAnswered.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (checkIfSaveFinished())  {
+                    Intent intent = new Intent(MainActivity.this, EditCards.class);
+                    intent.putExtra(EDIT_STARTUP, "answered");
+                    startActivity(intent);
+                }   else    {
                     Toast.makeText(MainActivity.this, "Failed to open", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -207,6 +218,7 @@ public class MainActivity extends AppCompatActivity{
         btnEditDecks = findViewById(R.id.btnEditDecks);
         spSelectDeck = findViewById(R.id.spDecks);
         btnInfo = findViewById(R.id.btnInfo);
+        btnAnswered = findViewById(R.id.btnAnswered);
     }
 
     @Override

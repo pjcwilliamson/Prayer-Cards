@@ -136,14 +136,35 @@
     </RadioGroup>
 
     <CheckBox
+        android:id="@+id/cbAnsweredPrayers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/include_answered_prayers"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rgRotationPosition"
+        android:layout_marginTop="6dp"/>
+
+    <CheckBox
+        android:id="@+id/cbIncludeAnsweredOnly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/include_answered_prayers_only"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cbAnsweredPrayers"
+        android:layout_marginTop="6dp"
+        android:visibility="gone"/>
+
+    <CheckBox
         android:id="@+id/cbTags"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/only_include_cards_with_particular_tags"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rgRotationPosition"
-        android:layout_marginTop="12dp"/>
+        app:layout_constraintTop_toBottomOf="@id/cbIncludeAnsweredOnly"
+        android:layout_marginTop="6dp"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
@@ -192,7 +213,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="6dp"
         android:background="@drawable/ripple_button_background"
         android:text="@string/save_changes"
         android:textColor="@android:color/white"
