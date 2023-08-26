@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity{
                 "over a few weeks, such as when someone gives you a prayer request. You can also mark prayers as 'answered'." +
                 " This app can accommodate however you want to be praying!\n\n" +
                 "Start making prayer cards by pressing 'Add New Card' and pray through your cards by pressing 'Pray Now'.\n\n" +
-                "v1.5.2 - Made in 2021 by Pete Williamson.\n\nPlease ask any questions or report any bugs at williamsonapps@outlook.com";
+                "v1.5.3 - Made in 2021 by Pete Williamson.\n\nPlease ask any questions or report any bugs at williamsonapps@outlook.com";
 
         SharedPreferences sp3 = getSharedPreferences("FIRST_OPEN", MODE_PRIVATE);
         boolean hasBeenOpened = sp3.getBoolean("FIRST_OPEN", false);
