@@ -285,30 +285,30 @@ public class EditCards extends AppCompatActivity implements OnStartDragListener 
     }
 
     private void importCSV() {
-        if (ContextCompat.checkSelfPermission(EditCards.this,
-                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(EditCards.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, IMPORT_READ_PERMISSION_CODE);
-        } else {
+//        if (ContextCompat.checkSelfPermission(EditCards.this,
+//                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(EditCards.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, IMPORT_READ_PERMISSION_CODE);
+//        } else {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("text/comma-separated-values");
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
             startActivityForResult(intent, IMPORT_FILE_CSV);
             //Do the import
-        }
+        //}
     }
 
     private void exportData() {
-        if (ContextCompat.checkSelfPermission(EditCards.this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(EditCards.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, EXPORT_WRITE_PERMISSION_CODE);
-        } else {
+//        if (ContextCompat.checkSelfPermission(EditCards.this,
+//                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(EditCards.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, EXPORT_WRITE_PERMISSION_CODE);
+//        } else {
             Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("text/comma-separated-values");
             intent.putExtra(Intent.EXTRA_TITLE, "PrayerCardsBackUp.csv");
             startActivityForResult(intent, EXPORT_FILE_CSV);
-        }
+        //}
     }
 
     /*Reads all the filter options, and returns a deck of cards based on the filter*/
