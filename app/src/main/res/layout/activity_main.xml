@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:layout_margin="15dp">
+    android:layout_marginHorizontal="10dp"
+    android:layout_marginVertical="40dp">
 
     <!--    To add button animations, check this website: https://stackoverflow.com/questions/7175873/how-to-set-button-click-effect-in-android-->
     <ImageButton

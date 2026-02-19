@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".EditDecks"
-    android:layout_margin="15dp">
+    android:layout_marginHorizontal="10dp"
+    android:layout_marginVertical="40dp">
 
     <ImageButton
         android:id="@+id/btnDeleteAll"
