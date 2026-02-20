@@ -7,8 +7,8 @@ android {
         applicationId "org.williamsonministry.prayercards"
         minSdkVersion 21
         targetSdkVersion 35
-        versionCode 22
-        versionName '1.5.10'
+        versionCode 23
+        versionName '1.5.11'
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
